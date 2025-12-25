@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Koushole - কৌশলে | পড়া হবে কৌশলে</title>
+    <title>কৌশলে - Koushole | পড়া হবে কৌশলে</title>
     
     <script>
       window.va = window.va || function () { (window.va.q = window.va.q || []).push(arguments); };
@@ -128,12 +128,11 @@
             100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(248, 113, 113, 0); }
         }
         
-        /* UPDATED: Perfect Circular Pulse */
         .recording-pulse {
             animation: pulse-ring 1.5s cubic-bezier(0.25, 0.8, 0.25, 1) infinite;
             color: #F87171 !important;
             border-color: #F87171 !important;
-            border-radius: 9999px !important; /* Force full rounded */
+            border-radius: 9999px !important;
         }
 
         /* Markdown Styles for AI Chat */
@@ -148,16 +147,20 @@
             transform: scale(1.02);
             box-shadow: 0 0 10px rgba(245, 158, 11, 0.2);
         }
-        /* New Classes for Color Connecting */
         .match-paired {
             opacity: 0.9;
-            pointer-events: none; /* Lock interaction after pairing */
+            pointer-events: none;
             font-weight: bold;
         }
         
-        .match-correct {
-            /* Handled dynamically via classes or overrides */
+        /* Visual style for correct answers shown after failure */
+        .match-solution {
+            border: 2px dashed #10B981 !important; 
+            background-color: rgba(16, 185, 129, 0.1) !important;
+            color: #10B981 !important;
+            pointer-events: none;
         }
+
         .match-wrong {
             background-color: rgba(244, 63, 94, 0.15) !important;
             border-color: #F43F5E !important;
@@ -184,12 +187,10 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
             display: flex;
             padding: 4px;
-            /* Slight 3D tilt for better visibility */
             transform: rotateX(10deg); 
         }
         
         .open-book::before {
-            /* Static Left Page */
             content: '';
             flex: 1;
             background: #FFF;
@@ -199,10 +200,9 @@
         }
         
         .open-book::after {
-            /* Static Right Page */
             content: '';
             flex: 1;
-            background: #F9FAFB; /* Slightly greyer to show depth */
+            background: #F9FAFB;
             margin-left: 1px;
             border-radius: 0 2px 2px 0;
             box-shadow: inset 2px 0 5px rgba(0,0,0,0.05);
@@ -226,7 +226,7 @@
             height: 100%;
             background: #FFF;
             border-radius: 0 2px 2px 0;
-            transform-origin: left center; /* Flip from the spine */
+            transform-origin: left center;
             animation: flip-side 2s infinite ease-in-out;
             border: 1px solid #F3F4F6;
             border-left: 1px solid #E5E7EB;
@@ -254,7 +254,6 @@
                         'text-secondary': 'var(--text-sub)', 
                         divider: 'var(--border-div)',
                         
-                        // Static Colors (Same in both modes)
                         amber: {
                             DEFAULT: '#F59E0B',   
                             glow: 'rgba(245, 158, 11, 0.4)',
@@ -1019,7 +1018,6 @@
 
         // --- LIBRARY & UPLOAD LOGIC ---
         const libraryBooks = [
-            { name: "Higher Math_Ch3.pdf", date: "Added 2 days ago", status: "Processing...", color: "rose" },
             { name: "Physics_Optics.pdf", date: "Added 5 days ago", status: "Ready", color: "sky" }
         ];
 
@@ -1515,13 +1513,27 @@
                             // Mark wrong pairs
                             document.getElementById(`left-${pair.left}`).classList.add('match-wrong');
                             document.getElementById(`right-${pair.right}`).classList.add('match-wrong');
-                        } else {
-                             // Mark correct visual (already colored, maybe add checkmark)
                         }
                     });
                 }
                 
                 if (allCorrect) isCorrect = true;
+                else {
+                    // SHOW CORRECT ANSWER FOR MATCH:
+                    // Loop through all left items
+                    leftKeys.forEach((key, lIdx) => {
+                        // Find expected right text
+                        const correctRightText = q.pairs[key];
+                        // Find index of that text in rightsData
+                        const rIdx = rightsData.indexOf(correctRightText);
+                        
+                        if (rIdx !== -1) {
+                            // Visually connect correct pair
+                            document.getElementById(`left-${lIdx}`).classList.add('match-solution');
+                            document.getElementById(`right-${rIdx}`).classList.add('match-solution');
+                        }
+                    });
+                }
                 
             } else if (type === 'order') {
                 // Mock success for these types for demo smoothness
@@ -1544,14 +1556,12 @@
                 }
                 setTimeout(() => document.getElementById('feedback-area').classList.remove('hidden'), 500);
             } else {
-                // Only show feedback area if it's NOT a partial match attempt that failed
-                if (type !== 'match') {
-                    if (q.topic && !userMemory.weaknesses.includes(q.topic)) {
-                        userMemory.weaknesses.push(q.topic);
-                        saveMemory();
-                    }
-                    document.getElementById('feedback-area').classList.remove('hidden');
+                // Show feedback (Right Answer/Explanation + Next Button) for ALL types, including match failure
+                if (q.topic && !userMemory.weaknesses.includes(q.topic)) {
+                    userMemory.weaknesses.push(q.topic);
+                    saveMemory();
                 }
+                document.getElementById('feedback-area').classList.remove('hidden');
                 navigator.vibrate?.(200);
             }
         }
