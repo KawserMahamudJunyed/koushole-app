@@ -108,6 +108,37 @@ function setLanguage(lang) {
     });
     document.getElementById('chat-input').placeholder = translations[lang].inputPlaceholder;
 
+    // Translate Class dropdown options
+    const classSelect = document.querySelector('select[name="classLevel"]');
+    if (classSelect) {
+        const classOptions = {
+            '9': { en: 'Class 9', bn: '৯ম শ্রেণী' },
+            '10': { en: 'Class 10', bn: '১০ম শ্রেণী' },
+            '11': { en: 'Class 11', bn: '১১শ শ্রেণী' },
+            '12': { en: 'Class 12', bn: '১২শ শ্রেণী' }
+        };
+        classSelect.querySelectorAll('option').forEach(opt => {
+            if (classOptions[opt.value]) {
+                opt.textContent = classOptions[opt.value][lang];
+            }
+        });
+    }
+
+    // Translate Group dropdown options
+    const groupSelect = document.querySelector('select[name="group"]');
+    if (groupSelect) {
+        const groupOptions = {
+            'Science': { en: 'Science', bn: 'বিজ্ঞান' },
+            'Humanities': { en: 'Humanities', bn: 'মানবিক' },
+            'Business Studies': { en: 'Business Studies', bn: 'ব্যবসায় শিক্ষা' }
+        };
+        groupSelect.querySelectorAll('option').forEach(opt => {
+            if (groupOptions[opt.value]) {
+                opt.textContent = groupOptions[opt.value][lang];
+            }
+        });
+    }
+
     // Refresh dynamic user data with new language
     if (typeof updateUI === 'function') updateUI();
 }

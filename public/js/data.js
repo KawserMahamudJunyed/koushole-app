@@ -105,7 +105,16 @@ const translations = {
         fileTypes: "PDF, EPUB (Max 50MB)",
         yourBooks: "Your Books",
         loading: "Loading...",
-        topic: "Topic"
+        topic: "Topic",
+        studentPlaceholder: "Student",
+        classGroupPlaceholder: "Class 10 • Science Group",
+        class9: "Class 9",
+        class10: "Class 10",
+        class11: "Class 11",
+        class12: "Class 12",
+        science: "Science",
+        humanities: "Humanities",
+        businessStudies: "Business Studies"
     },
     bn: {
         appName: "কৌশলে",
@@ -212,7 +221,16 @@ const translations = {
         fileTypes: "PDF, EPUB (সর্বোচ্চ ৫০MB)",
         yourBooks: "আপনার বইগুলো",
         loading: "লোড হচ্ছে...",
-        topic: "টপিক"
+        topic: "টপিক",
+        studentPlaceholder: "শিক্ষার্থী",
+        classGroupPlaceholder: "১০ম শ্রেণী • বিজ্ঞান বিভাগ",
+        class9: "৩য় শ্রেণী",
+        class10: "১০ম শ্রেণী",
+        class11: "১১শ শ্রেণী",
+        class12: "১২শ শ্রেণী",
+        science: "বিজ্ঞান",
+        humanities: "মানবিক",
+        businessStudies: "ব্যবসায় শিক্ষা"
     }
 };
 
