@@ -145,7 +145,6 @@ function toggleAuthMode(mode) {
         switchText.innerHTML = `${t('noAccount')} <b class="text-amber cursor-pointer" onclick="toggleAuthMode('signup')">${t('signupBtn')}</b>`;
     }
 }
-}
 
 async function handleAuth(e) {
     e.preventDefault();
@@ -521,40 +520,38 @@ function init() {
         if (e.key === 'Enter') sendMessage();
     });
 
-    // --- UI UPDATES ---
-    function updateUI() {
-        if (!isAuthenticated) return;
-
-        // 1. Greeting
-        updateGreeting();
-
-        // 2. Streak
-        const streakEls = document.querySelectorAll('[data-key="streak"]');
-        streakEls.forEach(el => el.innerText = `${userMemory.streak} ${currentLang === 'bn' ? 'দিন' : 'Days'}`);
-
-        // 3. XP / Score (If visible in profile)
-        // (Assuming profile has an ID for it, if not we add one)
-        const xpEl = document.getElementById('profile-xp-display');
-        if (xpEl) xpEl.innerText = `${userMemory.xp} XP`;
-
-        // 4. Update Profile Info
-        const pName = document.querySelector('#view-profile h2');
-        const pDetails = document.querySelector('#view-profile p');
-        if (pName) pName.innerText = userProfile.nickname || userProfile.name || "Student";
-        if (pDetails) pDetails.innerText = `${userProfile.class || 'Class 10'} • ${userProfile.group || 'Science'}`;
-
-        // 5. Update Initials
-        const initials = (userProfile.nickname || "S").charAt(0).toUpperCase();
-        document.querySelectorAll('#profile-initials').forEach(el => el.innerText = initials);
-    }
-
-
     // Wire up Logout
     const logoutBtn = document.querySelector('[data-key="logOut"]');
     if (logoutBtn) logoutBtn.onclick = async () => {
         await window.supabaseClient.auth.signOut();
         window.location.reload(); // Force reload to clear memory
     };
+}
+
+// --- UI UPDATES (GLOBAL SCOPE) ---
+function updateUI() {
+    if (!isAuthenticated) return;
+
+    // 1. Greeting
+    updateGreeting();
+
+    // 2. Streak
+    const streakEls = document.querySelectorAll('[data-key="streak"]');
+    streakEls.forEach(el => el.innerText = `${userMemory.streak} ${currentLang === 'bn' ? 'দিন' : 'Days'}`);
+
+    // 3. XP / Score
+    const xpEl = document.getElementById('profile-xp-display');
+    if (xpEl) xpEl.innerText = `${userMemory.xp} XP`;
+
+    // 4. Update Profile Info
+    const pName = document.querySelector('#view-profile h2');
+    const pDetails = document.querySelector('#view-profile p');
+    if (pName) pName.innerText = userProfile.nickname || userProfile.name || "Student";
+    if (pDetails) pDetails.innerText = `${userProfile.class || 'Class 10'} • ${userProfile.group || 'Science'}`;
+
+    // 5. Update Initials
+    const initials = (userProfile.nickname || "S").charAt(0).toUpperCase();
+    document.querySelectorAll('#profile-initials').forEach(el => el.innerText = initials);
 }
 
 init();

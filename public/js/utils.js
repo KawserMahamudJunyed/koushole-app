@@ -1,21 +1,10 @@
 // --- GLOBAL VARIABLES & STATE ---
 let currentLang = 'en';
-// User Memory System (Persisted in LocalStorage)
-const userMemory = JSON.parse(localStorage.getItem('koushole_memory')) || {
-    xp: 1250,
-    weaknesses: [],
-    history: []
-};
+// userMemory is now defined and managed in app.js (per-user storage)
 
 // Helper to translate dynamic strings
 function t(key) {
     return translations[currentLang][key] || key;
-}
-
-function saveMemory() {
-    localStorage.setItem('koushole_memory', JSON.stringify(userMemory));
-    // Check if updateProfileUI exists (it might not be loaded yet if this is called early, but logic flow should be fine)
-    if (typeof updateProfileUI === 'function') updateProfileUI();
 }
 
 // --- THEME LOGIC ---
