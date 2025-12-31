@@ -1198,8 +1198,8 @@ function updateUI() {
     setTxt('profile-fullname-en', userProfile.name);
     setTxt('profile-fullname-bn', userProfile.nameBn);
     setTxt('profile-nickname-en', userProfile.nickname);
-    setTxt('profile-nickname-bn', userProfile.nickname); // Assuming nicknameBn might be same or missing, using nickname fallback? Or maybe use display_name?
-    setTxt('profile-email', userProfile.email || 'user@example.com'); // This should come from auth, but userProfile might not have it.
+    setTxt('profile-nickname-bn', userProfile.nicknameBn);
+    setTxt('profile-email', 'user@example.com'); // Placeholder as requested
     setTxt('profile-class', userProfile.class);
     setTxt('profile-group', userProfile.group);
 
