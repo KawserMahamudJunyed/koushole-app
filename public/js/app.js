@@ -65,16 +65,19 @@ function saveMemory() {
 // Init
 function checkAuth() {
     const mainContent = document.getElementById('app-content');
+    const mainHeader = document.getElementById('main-header') || document.querySelector('header');
+    const mainNav = document.getElementById('main-nav') || document.querySelector('nav');
+
     if (isAuthenticated) {
         showView('view-dashboard');
-        document.querySelector('nav').classList.remove('hidden');
-        document.querySelector('header').classList.remove('hidden');
+        if (mainNav) mainNav.classList.remove('hidden');
+        if (mainHeader) mainHeader.classList.remove('hidden');
         if (mainContent) mainContent.classList.add('pb-24');
         updateGreeting();
     } else {
         showView('view-landing');
-        document.querySelector('nav').classList.add('hidden');
-        document.querySelector('header').classList.add('hidden');
+        if (mainNav) mainNav.classList.add('hidden');
+        if (mainHeader) mainHeader.classList.add('hidden');
         if (mainContent) mainContent.classList.remove('pb-24');
     }
 }
