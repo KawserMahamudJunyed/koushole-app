@@ -779,6 +779,7 @@ function renderBadge(badgeId) {
         icon: '⭐',
         name: badgeId,
         nameBn: badgeId,
+        gradient: 'from-gray-500 to-slate-600',
         bgColor: 'bg-surface',
         borderColor: 'border-divider',
         textColor: 'text-text-primary'
@@ -787,14 +788,25 @@ function renderBadge(badgeId) {
     const displayName = currentLang === 'bn' ? style.nameBn : style.name;
 
     return `
-        <div class="flex-shrink-0 w-20 group cursor-pointer transform hover:scale-105 transition-all duration-300">
-            <div class="relative">
-                <div class="${style.bgColor} ${style.borderColor} border-2 rounded-2xl p-3 flex flex-col items-center gap-2 shadow-lg hover:shadow-xl transition-shadow">
-                    <span class="text-3xl group-hover:animate-bounce">${style.icon}</span>
-                    <span class="${style.textColor} text-[10px] font-bold text-center leading-tight">${displayName}</span>
+        <div class="flex-shrink-0 group cursor-pointer badge-float">
+            <div class="relative w-24 h-32 shine-card rounded-2xl bg-surface border border-divider shadow-lg flex flex-col items-center justify-center gap-3 p-2 transition-colors duration-300 hover:border-amber/50">
+                
+                <!-- Glow Background -->
+                <div class="absolute inset-0 bg-gradient-to-br ${style.gradient} opacity-5 group-hover:opacity-10 transition-opacity"></div>
+                
+                <!-- Icon Circle -->
+                <div class="w-14 h-14 rounded-full bg-gradient-to-br ${style.gradient} flex items-center justify-center text-2xl shadow-inner relative z-10 group-hover:scale-110 transition-transform duration-300">
+                    <span class="drop-shadow-md filter">${style.icon}</span>
                 </div>
-                <div class="absolute -top-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full flex items-center justify-center">
-                    <i class="fas fa-check text-white text-[8px]"></i>
+
+                <!-- Text -->
+                <div class="flex flex-col items-center gap-1 z-10 w-full">
+                    <span class="text-[10px] font-bold text-center leading-tight line-clamp-2 ${style.textColor} uppercase tracking-wide">${displayName}</span>
+                </div>
+
+                <!-- Checkmark Badge -->
+                <div class="absolute top-2 right-2 w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center shadow-md border-2 border-surface z-20">
+                    <i class="fas fa-check text-white text-[9px]"></i>
                 </div>
             </div>
         </div>
