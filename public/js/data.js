@@ -118,7 +118,12 @@ const translations = {
         // New User Welcome
         welcomeTitle: "Start Your Journey!",
         welcomeDesc: "Take your first quiz to begin tracking your progress.",
-        startFirstQuiz: "Start First Quiz"
+        startFirstQuiz: "Start First Quiz",
+        // Quiz Empty State
+        readyToLearn: "Ready to Learn?",
+        selectTopic: "Select a topic and start a quiz.",
+        startQuiz: "Start Quiz",
+        noBooksYet: "No books uploaded yet. Upload a book above to get started!"
     },
     bn: {
         appName: "কৌশলে",
@@ -238,7 +243,12 @@ const translations = {
         // New User Welcome
         welcomeTitle: "তোমার যাত্রা শুরু করো!",
         welcomeDesc: "তোমার অগ্রগতি ট্র্যাক করতে প্রথম কুইজ দাও।",
-        startFirstQuiz: "প্রথম কুইজ শুরু করুন"
+        startFirstQuiz: "প্রথম কুইজ শুরু করুন",
+        // Quiz Empty State
+        readyToLearn: "শেখার জন্য তৈরি?",
+        selectTopic: "একটি বিষয় নির্বাচন করে কুইজ শুরু করুন।",
+        startQuiz: "কুইজ শুরু করুন",
+        noBooksYet: "এখনও কোনো বই আপলোড করা হয়নি। উপরে বই আপলোড করুন!"
     }
 };
 
