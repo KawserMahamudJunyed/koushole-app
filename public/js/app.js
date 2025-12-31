@@ -93,6 +93,7 @@ function showView(viewId) {
 
 function goToAuth() {
     showView('view-auth');
+    toggleAuthMode('login'); // Force init form
 }
 
 let authMode = 'login';
@@ -109,37 +110,41 @@ function toggleAuthMode(mode) {
     const inputs = signupFields.querySelectorAll('input, select');
     const title = document.getElementById('auth-title');
 
+    // Reset styles
+    loginTab.style.color = '';
+    signupTab.style.color = '';
+
     if (authMode === 'signup') {
         loginTab.classList.remove('bg-amber', 'text-black', '!text-black', 'shadow-sm');
         loginTab.classList.add('text-text-secondary', 'hover:text-text-primary');
-        loginTab.style.color = '';
 
         signupTab.classList.add('bg-amber', 'text-black', '!text-black', 'shadow-sm');
         signupTab.classList.remove('text-text-secondary', 'hover:text-text-primary');
-        signupTab.style.color = 'black';
+        signupTab.style.color = 'black'; // Force
 
         signupFields.classList.remove('hidden');
         inputs.forEach(el => { el.disabled = false; el.required = true; });
 
         title.innerText = t('signupTitle');
         submitBtn.innerText = t('signupBtn');
-        switchText.innerHTML = `${t('haveAccount')} <b class="text-amber">${t('loginBtn')}</b>`;
+        switchText.innerHTML = `${t('haveAccount')} <b class="text-amber cursor-pointer" onclick="toggleAuthMode('login')">${t('loginBtn')}</b>`;
 
     } else {
         signupTab.classList.remove('bg-amber', 'text-black', '!text-black', 'shadow-sm');
         signupTab.classList.add('text-text-secondary', 'hover:text-text-primary');
-        signupTab.style.color = '';
 
         loginTab.classList.add('bg-amber', 'text-black', '!text-black', 'shadow-sm');
         loginTab.classList.remove('text-text-secondary', 'hover:text-text-primary');
-        loginTab.style.color = 'black';
+        loginTab.style.color = 'black'; // Force
 
         signupFields.classList.add('hidden');
         inputs.forEach(el => { el.disabled = true; el.required = false; });
 
         title.innerText = t('loginTitle');
         submitBtn.innerText = t('loginBtn');
-        switchText.innerHTML = `${t('noAccount')} <b class="text-amber">${t('signupBtn')}</b>`;
+        switchText.innerHTML = `${t('noAccount')} <b class="text-amber cursor-pointer" onclick="toggleAuthMode('signup')">${t('signupBtn')}</b>`;
+    }
+}
     }
 }
 
