@@ -194,6 +194,10 @@ function toggleAuthMode(mode) {
         signupFields.classList.remove('hidden');
         inputs.forEach(el => { el.disabled = false; el.required = true; });
 
+        // Hide login-only elements
+        const loginExtras = document.getElementById('login-extras');
+        if (loginExtras) loginExtras.classList.add('hidden');
+
         title.innerText = t('signupTitle');
         submitBtn.innerText = t('signupBtn');
         switchText.innerHTML = `${t('haveAccount')} <b class="text-amber cursor-pointer" onclick="toggleAuthMode('login')">${t('loginBtn')}</b>`;
@@ -209,9 +213,34 @@ function toggleAuthMode(mode) {
         signupFields.classList.add('hidden');
         inputs.forEach(el => { el.disabled = true; el.required = false; });
 
+        // Show login-only elements
+        const loginExtras = document.getElementById('login-extras');
+        if (loginExtras) loginExtras.classList.remove('hidden');
+
         title.innerText = t('loginTitle');
         submitBtn.innerText = t('loginBtn');
         switchText.innerHTML = `${t('noAccount')} <b class="text-amber cursor-pointer" onclick="toggleAuthMode('signup')">${t('signupBtn')}</b>`;
+    }
+}
+
+// Password Reset
+async function showForgotPassword() {
+    const email = prompt("Enter your email address for password reset:");
+    if (!email) return;
+
+    try {
+        const { error } = await window.supabaseClient.auth.resetPasswordForEmail(email, {
+            redirectTo: window.location.origin + '/reset-password'
+        });
+
+        if (error) {
+            alert("Error: " + error.message);
+        } else {
+            alert("Password reset email sent! Check your inbox.");
+        }
+    } catch (err) {
+        console.error("Password reset error:", err);
+        alert("Failed to send reset email. Please try again.");
     }
 }
 
@@ -605,10 +634,19 @@ function updateUI() {
     updateGreeting();
 
     // 2. Streak (Header + Profile)
-    const streakEls = document.querySelectorAll('[data-key="streak"]');
-    streakEls.forEach(el => el.innerText = `${userMemory.day_streak || 0} ${currentLang === 'bn' ? 'দিন' : 'Days'}`);
+    const streakValue = userMemory.day_streak || 0;
+    const streakText = `${streakValue} ${currentLang === 'bn' ? 'দিন' : 'Days'}`;
+
+    // Update all data-key="streak" elements
+    document.querySelectorAll('[data-key="streak"]').forEach(el => el.innerText = streakText);
+
+    // Also target by ID for header
+    const headerStreak = document.getElementById('streak-text');
+    if (headerStreak) headerStreak.innerText = streakText;
+
+    // Profile page streak (just the number)
     const streakProfileEl = document.getElementById('streak-profile-display');
-    if (streakProfileEl) streakProfileEl.innerText = userMemory.day_streak || 0;
+    if (streakProfileEl) streakProfileEl.innerText = streakValue;
 
     // 3. XP / Score
     const xpEl = document.getElementById('xp-display');
@@ -624,9 +662,11 @@ function updateUI() {
     if (pName) pName.innerText = userProfile.nickname || userProfile.name || "Student";
     if (pDetails) pDetails.innerText = `Class ${userProfile.class || '10'} • ${userProfile.group || 'Science'} Group`;
 
-    // 6. Update Initials
+    // 6. Update Initials (Profile + Header)
     const initials = (userProfile.nickname || "S").charAt(0).toUpperCase();
     document.querySelectorAll('#profile-initials').forEach(el => el.innerText = initials);
+    const headerInitials = document.getElementById('header-profile-initials');
+    if (headerInitials) headerInitials.innerText = initials;
 
     // 7. Weakness Cloud
     const weaknessCloud = document.getElementById('weakness-cloud');

@@ -110,7 +110,7 @@
                     data-key="appName">Koushole</span>
                 <span
                     class="text-[10px] sm:text-xs text-text-secondary font-medium tracking-wider body-font leading-none"
-                    data-key="appSubtitle">Study Smarter</span>
+                    data-key="appSubtitle">Study <b class="text-amber">Smarter</b></span>
             </div>
         </div>
 
@@ -150,12 +150,13 @@
                 <i class="fas fa-fire text-orange animate-pulse text-xs sm:text-sm"></i>
                 <span id="streak-text"
                     class="hidden sm:block text-xs sm:text-sm font-bold text-orange body-font whitespace-nowrap"
-                    data-key="streak">12 Days</span>
+                    data-key="streak">0 Days</span>
             </div>
 
             <div onclick="switchTab('profile')"
-                class="w-8 h-8 rounded-full bg-gradient-to-tr from-amber to-amber-deep flex items-center justify-center text-midnight font-bold text-xs cursor-pointer shrink-0 hover:scale-110 active:scale-90 transition-transform shadow-amber-glow">
-                KM
+                class="w-8 h-8 rounded-full bg-gradient-to-tr from-amber to-amber-deep flex items-center justify-center text-midnight font-bold text-xs cursor-pointer shrink-0 hover:scale-110 active:scale-90 transition-transform shadow-amber-glow"
+                id="header-profile-initials">
+                S
             </div>
         </div>
     </header>
@@ -360,8 +361,21 @@
                         placeholder="••••••••" required>
                 </div>
 
+                <!-- Remember Me & Forgot Password (Login Only) -->
+                <div id="login-extras" class="flex justify-between items-center text-sm">
+                    <label
+                        class="flex items-center gap-2 cursor-pointer text-text-secondary hover:text-text-primary transition-colors">
+                        <input type="checkbox" name="rememberMe" class="w-4 h-4 accent-amber rounded">
+                        <span data-key="rememberMe">Remember me</span>
+                    </label>
+                    <button type="button" onclick="showForgotPassword()"
+                        class="text-amber hover:underline text-sm font-medium" data-key="forgotPassword">
+                        Forgot Password?
+                    </button>
+                </div>
+
                 <button type="submit" id="auth-submit-btn"
-                    class="w-full bg-amber text-black font-bold h-12 flex items-center justify-center rounded-lg shadow-md hover:shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all mt-6"
+                    class="w-full bg-amber text-black font-bold h-12 flex items-center justify-center rounded-lg shadow-md hover:shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all mt-4"
                     data-key="loginBtn">
                     Log In
                 </button>
@@ -588,8 +602,7 @@
                     </div>
                     <div
                         class="bg-surface border border-divider text-text-primary p-3 rounded-2xl rounded-tl-none max-w-[85%] text-sm leading-relaxed shadow-sm transition-colors prose prose-invert prose-sm">
-                        <span data-key="aiMsg1">Hello Junyed! I noticed you struggled with <strong>Kinetic
-                                Energy</strong> in the last quiz. Would you like a quick example?</span>
+                        <span data-key="aiMsg1">Hello! I'm your AI Tutor. How can I help you learn today?</span>
                     </div>
                 </div>
             </div>

@@ -3,8 +3,8 @@ const translations = {
     en: {
         appName: "Koushole",
         appSubtitle: "Study Smarter",
-        streak: "12 Days",
-        greeting: "Good Evening, Junyed! 🚀",
+        streak: "0 Days",
+        greeting: "Good Evening! 🚀",
         subtitle: "Ready to crush Physics today?",
         chartTitle: "Learning Velocity",
         chartTime: "Last 7 Days",
@@ -30,7 +30,7 @@ const translations = {
         nextQBtn: "Next Question",
         chatHeader: "Koushole AI Tutor",
         chatSub: "Powered by Koushole AI",
-        aiMsg1: "Hello Junyed! I'm your AI Tutor. I can see you need some help with <strong>Kinetic Energy</strong>. Want to practice?",
+        aiMsg1: "Hello! I'm your AI Tutor. How can I help you learn today?",
         navHome: "Home",
         navQuiz: "Quiz",
         navChat: "AI Chat",
@@ -146,7 +146,7 @@ const translations = {
         listening: "শুনছি...",
         checkMatches: "মিল যাচাই করুন",
         // Landing & Auth Keys
-        landingTitle: "কৌশলে-তে স্বাগতম",
+        landingTitle: "কৌশলে স্বাগতম",
         landingSubtitle: "আপনার ব্যক্তিগত এআই স্টাডি পার্টনার।",
         getStartedBtn: "শুরু করুন",
         loginTitle: "স্বাগতম",
