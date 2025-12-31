@@ -1193,6 +1193,16 @@ function updateUI() {
     const headerInitials = document.getElementById('header-profile-initials');
     if (headerInitials) headerInitials.innerText = initials;
 
+    // Populate Personal Details Accordion
+    const setTxt = (id, val) => { const e = document.getElementById(id); if (e) e.innerText = val || '-'; };
+    setTxt('profile-fullname-en', userProfile.name);
+    setTxt('profile-fullname-bn', userProfile.nameBn);
+    setTxt('profile-nickname-en', userProfile.nickname);
+    setTxt('profile-nickname-bn', userProfile.nickname); // Assuming nicknameBn might be same or missing, using nickname fallback? Or maybe use display_name?
+    setTxt('profile-email', userProfile.email || 'user@example.com'); // This should come from auth, but userProfile might not have it.
+    setTxt('profile-class', userProfile.class);
+    setTxt('profile-group', userProfile.group);
+
     // 7. Weakness Cloud
     const weaknessCloud = document.getElementById('weakness-cloud');
     if (weaknessCloud) {
@@ -1502,14 +1512,14 @@ document.addEventListener('click', (e) => {
 });
 
 async function checkDailyReminder() {
-    // Check if we already reminded today using localStorage to avoid duplicate checks per session
-    const today = new Date().toDateString();
-    const lastCheck = localStorage.getItem('last_reminder_check');
+    // 6 Hour Minimum Interval Check
+    const lastCheck = localStorage.getItem('last_reminder_timestamp');
+    const now = Date.now();
+    const minInterval = 6 * 60 * 60 * 1000; // 6 hours
 
-    if (lastCheck === today) return; // Already checked today
-
-    // Logic: If user hasn't studied today (quiz count same as yesterday? hard to track without history)
-    // Simpler: Just random encouragement if it's their first login of the day
+    if (lastCheck && (now - parseInt(lastCheck) < minInterval)) {
+        return;
+    }
 
     const messages = [
         "Time to keep your streak alive! 🔥",
@@ -1519,7 +1529,7 @@ async function checkDailyReminder() {
     ];
     const randomMsg = messages[Math.floor(Math.random() * messages.length)];
 
-    await createNotification('reminder', 'Daily Study Reminder', randomMsg);
+    await createNotification('reminder', 'Study Reminder', randomMsg);
 
-    localStorage.setItem('last_reminder_check', today);
+    localStorage.setItem('last_reminder_timestamp', now.toString());
 }
