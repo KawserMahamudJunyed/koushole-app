@@ -136,6 +136,7 @@ async function startCustomQuiz() {
 
     document.getElementById('quiz-results').classList.add('hidden');
     document.getElementById('quiz-content').classList.add('hidden');
+    document.getElementById('quiz-empty-state').classList.add('hidden');
     document.getElementById('quiz-loading').classList.remove('hidden');
 
     const subject = document.getElementById('config-subject').value;
