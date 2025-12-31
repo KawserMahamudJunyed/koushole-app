@@ -1,7 +1,7 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
-const SUPABASE_URL = 'https://iexolpurphniznxurjdh.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlleG9scHVycGhuaXpueHVyamRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcwOTg3ODIsImV4cCI6MjA4MjY3NDc4Mn0.-3krAlaNs2q2tU7wSnsmPkf_YOdB-OR0nexJabz8S34';
+const SUPABASE_URL = 'https://mocbdqgvsunbxmrnllbr.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1vY2JkcWd2c3VuYnhtcm5sbGJyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcxNzU4ODgsImV4cCI6MjA4Mjc1MTg4OH0.kluKPXb0QCeReZUiD1xjV7U7c3zKYmt76qx0OXYYtrg';
 
 console.log("🔌 Supabase Config Loading (ES Module)...");
 console.log("📍 URL:", SUPABASE_URL);
