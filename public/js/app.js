@@ -1199,7 +1199,7 @@ function updateUI() {
     setTxt('profile-fullname-bn', userProfile.nameBn);
     setTxt('profile-nickname-en', userProfile.nickname);
     setTxt('profile-nickname-bn', userProfile.nicknameBn);
-    setTxt('profile-email', 'user@example.com'); // Placeholder as requested
+    setTxt('profile-email', userProfile.email || window.supabaseClient.auth.user()?.email || '-');
     setTxt('profile-class', userProfile.class);
     setTxt('profile-group', userProfile.group);
 
@@ -1477,6 +1477,23 @@ async function markAllNotificationsRead() {
         fetchNotifications();
     } catch (err) {
         console.error("Failed to mark read:", err);
+    }
+}
+
+
+function toggleStreak() {
+    const text = document.getElementById('streak-text');
+    const bell = document.getElementById('notification-container');
+
+    // Toggle Logic for Mobile (Desktop handles visibility via CSS sm:block)
+    if (text.classList.contains('hidden')) {
+        // Show text, Hide Bell
+        text.classList.remove('hidden');
+        bell.classList.add('hidden');
+    } else {
+        // Hide text, Show Bell
+        text.classList.add('hidden');
+        bell.classList.remove('hidden');
     }
 }
 
