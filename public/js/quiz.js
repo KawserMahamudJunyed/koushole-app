@@ -14,6 +14,83 @@ let matchState = {
 
 let orderedItems = [];
 
+// --- SAVE QUIZ RESULTS TO SUPABASE ---
+async function saveQuizResultsToDatabase(earnedXP, accuracyPercent) {
+    if (!window.supabaseClient) {
+        console.warn("Supabase client not available, skipping database save");
+        return;
+    }
+
+    try {
+        const { data: { user } } = await window.supabaseClient.auth.getUser();
+        if (!user) {
+            console.warn("No user logged in, skipping database save");
+            return;
+        }
+
+        // First, try to get existing stats
+        const { data: existingStats, error: fetchError } = await window.supabaseClient
+            .from('learning_stats')
+            .select('*')
+            .eq('user_id', user.id)
+            .single();
+
+        if (fetchError && fetchError.code !== 'PGRST116') {
+            // PGRST116 = no rows found (which is OK for new users)
+            console.error("Error fetching stats:", fetchError);
+        }
+
+        const newTotalXP = (existingStats?.total_xp || 0) + earnedXP;
+        const newQuizCount = (existingStats?.quizzes_completed || 0) + 1;
+        const oldAccuracy = existingStats?.accuracy_percentage || 0;
+        const newAccuracy = oldAccuracy === 0 ? accuracyPercent : Math.round((oldAccuracy + accuracyPercent) / 2);
+
+        if (existingStats) {
+            // Update existing record
+            const { error: updateError } = await window.supabaseClient
+                .from('learning_stats')
+                .update({
+                    total_xp: newTotalXP,
+                    accuracy_percentage: newAccuracy,
+                    quizzes_completed: newQuizCount,
+                    updated_at: new Date().toISOString()
+                })
+                .eq('user_id', user.id);
+
+            if (updateError) {
+                console.error("Error updating stats:", updateError);
+            } else {
+                console.log("✅ Quiz stats updated in database!");
+            }
+        } else {
+            // Insert new record
+            const { error: insertError } = await window.supabaseClient
+                .from('learning_stats')
+                .insert({
+                    user_id: user.id,
+                    total_xp: newTotalXP,
+                    accuracy_percentage: newAccuracy,
+                    quizzes_completed: newQuizCount,
+                    current_streak: 1
+                });
+
+            if (insertError) {
+                console.error("Error inserting stats:", insertError);
+            } else {
+                console.log("✅ Quiz stats saved to database!");
+            }
+        }
+
+        // Update the UI displays
+        if (typeof updateProfileUI === 'function') {
+            updateProfileUI();
+        }
+
+    } catch (err) {
+        console.error("Database save error:", err);
+    }
+}
+
 // --- QUIZ CONFIGURATION ---
 
 function updateChapters() {
@@ -285,13 +362,17 @@ function renderQuestion() {
         document.getElementById('result-score').innerText = `${percentage}%`;
 
         // Update userMemory with Supabase-compatible fields
-        userMemory.total_xp = (userMemory.total_xp || 0) + 50 + (currentQuizScore * 10);
+        const earnedXP = 50 + (currentQuizScore * 10);
+        userMemory.total_xp = (userMemory.total_xp || 0) + earnedXP;
 
         // Recalculate accuracy (weighted average)
         const oldTotal = userMemory.accuracy_percentage || 0;
         userMemory.accuracy_percentage = Math.round((oldTotal + percentage) / 2);
 
         saveMemory();
+
+        // Save to Supabase Database
+        saveQuizResultsToDatabase(earnedXP, percentage);
 
         confetti({ particleCount: 200, spread: 90, origin: { y: 0.6 } });
         return;
