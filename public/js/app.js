@@ -7,59 +7,128 @@ let isAuthenticated = false;
 let userProfile = {};
 let currentUserId = null;
 
-// Default "Fresh User" State
-const DEFAULT_MEMORY = {
-    streak: 0,
-    lastLogin: null,
-    xp: 0,
+// Default "Fresh User" State (Matches Supabase `learning_stats` table)
+const DEFAULT_STATS = {
+    total_xp: 0,
+    day_streak: 0,
+    accuracy_percentage: 0,
     weaknesses: [],
-    completedQuizzes: 0,
-    quizHistory: []
+    badges: []
 };
 
-// Global Memory Object (Loaded per user)
-let userMemory = JSON.parse(JSON.stringify(DEFAULT_MEMORY));
+// Global Memory Objects
+let userMemory = JSON.parse(JSON.stringify(DEFAULT_STATS));
 
 // Init Auth Listener
 if (window.supabaseClient) {
     window.supabaseClient.auth.onAuthStateChange(async (event, session) => {
         if (session) {
             isAuthenticated = true;
-            userProfile = session.user.user_metadata || {};
             currentUserId = session.user.id;
-            loadUserData(currentUserId); // Load THEIR data
+            await loadUserData(currentUserId); // Fetch from Supabase
         } else {
             console.log("Logged out - Resetting State");
             isAuthenticated = false;
             userProfile = {};
             currentUserId = null;
-            userMemory = JSON.parse(JSON.stringify(DEFAULT_MEMORY)); // Reset to default
+            userMemory = JSON.parse(JSON.stringify(DEFAULT_STATS));
         }
         checkAuth();
-        updateUI(); // Force full refresh
+        updateUI();
     });
 } else {
     console.warn("Supabase client not ready. Auth listener disabled.");
 }
 
-function loadUserData(userId) {
-    const key = `koushole_data_${userId}`;
-    const stored = localStorage.getItem(key);
-    if (stored) {
-        userMemory = { ...DEFAULT_MEMORY, ...JSON.parse(stored) }; // Merge to ensure new fields (like xp) exist
-        console.log("Loaded data for:", userId, userMemory);
-    } else {
-        console.log("New User detected. Initializing fresh state.");
-        userMemory = JSON.parse(JSON.stringify(DEFAULT_MEMORY));
-        // Bonus: First login streak?
-        saveMemory();
+// Fetch user data from Supabase tables
+async function loadUserData(userId) {
+    if (!window.supabaseClient) return;
+
+    try {
+        // 1. Fetch Profile
+        const { data: profile, error: profileError } = await window.supabaseClient
+            .from('profiles')
+            .select('*')
+            .eq('user_id', userId)
+            .single();
+
+        if (profileError && profileError.code !== 'PGRST116') {
+            console.error("Profile fetch error:", profileError);
+        }
+
+        if (profile) {
+            userProfile = {
+                name: profile.full_name,
+                nameBn: profile.full_name_bn,
+                nickname: profile.nickname,
+                nicknameBn: profile.nickname_bn,
+                class: profile.class,
+                group: profile.group_name
+            };
+            console.log("Loaded Profile:", userProfile);
+        } else {
+            // Use auth metadata as fallback
+            const { data: { user } } = await window.supabaseClient.auth.getUser();
+            userProfile = user?.user_metadata || {};
+        }
+
+        // 2. Fetch Learning Stats
+        const { data: stats, error: statsError } = await window.supabaseClient
+            .from('learning_stats')
+            .select('*')
+            .eq('user_id', userId)
+            .single();
+
+        if (statsError && statsError.code !== 'PGRST116') {
+            console.error("Stats fetch error:", statsError);
+        }
+
+        if (stats) {
+            userMemory = {
+                total_xp: stats.total_xp || 0,
+                day_streak: stats.day_streak || 0,
+                accuracy_percentage: stats.accuracy_percentage || 0,
+                weaknesses: stats.weaknesses || [],
+                badges: stats.badges || []
+            };
+            console.log("Loaded Stats:", userMemory);
+        } else {
+            // New user - create initial stats row
+            console.log("New user - creating initial stats");
+            userMemory = JSON.parse(JSON.stringify(DEFAULT_STATS));
+            await saveMemory(); // Create the row
+        }
+
+    } catch (err) {
+        console.error("loadUserData error:", err);
     }
 }
 
-function saveMemory() {
-    if (!currentUserId) return;
-    localStorage.setItem(`koushole_data_${currentUserId}`, JSON.stringify(userMemory));
-    updateUI(); // Auto-refresh UI on save
+// Save user stats to Supabase
+async function saveMemory() {
+    if (!currentUserId || !window.supabaseClient) return;
+
+    try {
+        const { error } = await window.supabaseClient
+            .from('learning_stats')
+            .upsert({
+                user_id: currentUserId,
+                total_xp: userMemory.total_xp,
+                day_streak: userMemory.day_streak,
+                accuracy_percentage: userMemory.accuracy_percentage,
+                weaknesses: userMemory.weaknesses,
+                badges: userMemory.badges
+            }, { onConflict: 'user_id' });
+
+        if (error) {
+            console.error("Save stats error:", error);
+        } else {
+            console.log("Stats saved to Supabase");
+            updateUI();
+        }
+    } catch (err) {
+        console.error("saveMemory error:", err);
+    }
 }
 
 // Init
@@ -535,23 +604,49 @@ function updateUI() {
     // 1. Greeting
     updateGreeting();
 
-    // 2. Streak
+    // 2. Streak (Header + Profile)
     const streakEls = document.querySelectorAll('[data-key="streak"]');
-    streakEls.forEach(el => el.innerText = `${userMemory.streak} ${currentLang === 'bn' ? 'দিন' : 'Days'}`);
+    streakEls.forEach(el => el.innerText = `${userMemory.day_streak || 0} ${currentLang === 'bn' ? 'দিন' : 'Days'}`);
+    const streakProfileEl = document.getElementById('streak-profile-display');
+    if (streakProfileEl) streakProfileEl.innerText = userMemory.day_streak || 0;
 
     // 3. XP / Score
-    const xpEl = document.getElementById('profile-xp-display');
-    if (xpEl) xpEl.innerText = `${userMemory.xp} XP`;
+    const xpEl = document.getElementById('xp-display');
+    if (xpEl) xpEl.innerText = (userMemory.total_xp || 0).toLocaleString();
 
-    // 4. Update Profile Info
+    // 4. Accuracy
+    const accEl = document.getElementById('accuracy-display');
+    if (accEl) accEl.innerText = `${userMemory.accuracy_percentage || 0}%`;
+
+    // 5. Update Profile Info
     const pName = document.querySelector('#view-profile h2');
-    const pDetails = document.querySelector('#view-profile p');
+    const pDetails = document.querySelector('#view-profile p.body-font');
     if (pName) pName.innerText = userProfile.nickname || userProfile.name || "Student";
-    if (pDetails) pDetails.innerText = `${userProfile.class || 'Class 10'} • ${userProfile.group || 'Science'}`;
+    if (pDetails) pDetails.innerText = `Class ${userProfile.class || '10'} • ${userProfile.group || 'Science'} Group`;
 
-    // 5. Update Initials
+    // 6. Update Initials
     const initials = (userProfile.nickname || "S").charAt(0).toUpperCase();
     document.querySelectorAll('#profile-initials').forEach(el => el.innerText = initials);
+
+    // 7. Weakness Cloud
+    const weaknessCloud = document.getElementById('weakness-cloud');
+    if (weaknessCloud) {
+        if (userMemory.weaknesses && userMemory.weaknesses.length > 0) {
+            weaknessCloud.innerHTML = userMemory.weaknesses.map(w =>
+                `<span class="px-2 py-1 rounded-full bg-rose/10 text-rose text-xs border border-rose/30">${w}</span>`
+            ).join('');
+        } else {
+            weaknessCloud.innerHTML = '<span class="text-xs text-text-secondary italic">Keep learning to discover focus areas!</span>';
+        }
+    }
+
+    // 8. Badges/Achievements
+    const badgesContainer = document.getElementById('badges-container');
+    if (badgesContainer && userMemory.badges) {
+        badgesContainer.innerHTML = userMemory.badges.map(b =>
+            `<span class="px-3 py-1 rounded-full bg-amber/10 text-amber text-xs border border-amber/30">${b}</span>`
+        ).join('') || '<span class="text-xs text-text-secondary italic">Earn badges by completing quizzes!</span>';
+    }
 }
 
 init();

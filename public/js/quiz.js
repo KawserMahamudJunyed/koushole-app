@@ -232,7 +232,13 @@ function renderQuestion() {
         const percentage = Math.round((currentQuizScore / currentQuizQuestions.length) * 100);
         document.getElementById('result-score').innerText = `${percentage}%`;
 
-        userMemory.xp += 50;
+        // Update userMemory with Supabase-compatible fields
+        userMemory.total_xp = (userMemory.total_xp || 0) + 50 + (currentQuizScore * 10);
+
+        // Recalculate accuracy (weighted average)
+        const oldTotal = userMemory.accuracy_percentage || 0;
+        userMemory.accuracy_percentage = Math.round((oldTotal + percentage) / 2);
+
         saveMemory();
 
         confetti({ particleCount: 200, spread: 90, origin: { y: 0.6 } });

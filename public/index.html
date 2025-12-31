@@ -718,17 +718,17 @@
             <div class="grid grid-cols-3 gap-3 mb-8">
                 <div
                     class="bg-surface border border-divider rounded-xl p-3 text-center transition-colors hover:scale-105 transition-transform duration-200">
-                    <p class="text-amber font-bold text-xl title-font" id="xp-display">1,250</p>
+                    <p class="text-amber font-bold text-xl title-font" id="xp-display">0</p>
                     <p class="text-[10px] text-text-secondary uppercase tracking-widest mt-1">Total XP</p>
                 </div>
                 <div
                     class="bg-surface border border-divider rounded-xl p-3 text-center transition-colors hover:scale-105 transition-transform duration-200">
-                    <p class="text-emerald font-bold text-xl title-font">85%</p>
+                    <p class="text-emerald font-bold text-xl title-font" id="accuracy-display">0%</p>
                     <p class="text-[10px] text-text-secondary uppercase tracking-widest mt-1">Accuracy</p>
                 </div>
                 <div
                     class="bg-surface border border-divider rounded-xl p-3 text-center transition-colors hover:scale-105 transition-transform duration-200">
-                    <p class="text-orange font-bold text-xl title-font">12</p>
+                    <p class="text-orange font-bold text-xl title-font" id="streak-profile-display">0</p>
                     <p class="text-[10px] text-text-secondary uppercase tracking-widest mt-1">Day Streak</p>
                 </div>
             </div>
@@ -745,30 +745,8 @@
                     <h3 class="text-text-primary font-bold title-font text-lg">Achievements</h3>
                     <span class="text-amber text-xs font-bold cursor-pointer hover:underline">View All</span>
                 </div>
-                <div class="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
-                    <div
-                        class="group flex flex-col items-center min-w-[80px] hover:scale-110 transition-transform duration-200">
-                        <div
-                            class="w-16 h-16 rounded-full bg-amber/20 flex items-center justify-center text-amber text-2xl mb-2 border border-amber/50">
-                            <i class="fas fa-bolt group-hover:animate-pulse"></i>
-                        </div>
-                        <span class="text-[10px] text-text-primary font-medium text-center">Fast Learner</span>
-                    </div>
-                    <div
-                        class="group flex flex-col items-center min-w-[80px] hover:scale-110 transition-transform duration-200">
-                        <div
-                            class="w-16 h-16 rounded-full bg-sky/20 flex items-center justify-center text-sky text-2xl mb-2 border border-sky/50">
-                            <i class="fas fa-brain group-hover:animate-float"></i>
-                        </div>
-                        <span class="text-[10px] text-text-primary font-medium text-center">Quiz Master</span>
-                    </div>
-                    <div class="flex flex-col items-center min-w-[80px] opacity-70">
-                        <div
-                            class="w-16 h-16 rounded-full bg-surface border border-divider flex items-center justify-center text-text-secondary text-2xl mb-2 grayscale opacity-50">
-                            <i class="fas fa-medal"></i>
-                        </div>
-                        <span class="text-[10px] text-text-secondary font-medium text-center">Locked</span>
-                    </div>
+                <div id="badges-container" class="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
+                    <span class="text-xs text-text-secondary italic">Complete quizzes to earn badges!</span>
                 </div>
             </div>
 
