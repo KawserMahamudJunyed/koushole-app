@@ -559,8 +559,8 @@ function renderQuestion() {
     }
     else if (q.type === 'order') {
         orderedItems = [];
-        const itemsHtml = q.items.map(item =>
-            `<button onclick="addToOrder('${item}')" class="px-3 py-2 bg-surface border border-divider rounded-lg font-bold hover:border-amber">${item}</button>`
+        const itemsHtml = q.items.map((item, idx) =>
+            `<button id="order-item-${idx}" onclick="addToOrder('${item}', ${idx})" class="order-word px-3 py-2 bg-surface border border-divider rounded-lg font-bold hover:border-amber transition-all">${item}</button>`
         ).join(' ');
 
         container.innerHTML = `
@@ -636,9 +636,16 @@ function selectMatch(side, idx) {
     matchState.selectedItem = null;
 }
 
-function addToOrder(item) {
+function addToOrder(item, idx) {
     orderedItems.push(item);
-    document.getElementById('order-drop-zone').innerHTML = orderedItems.map(i => `<span class="bg-amber/20 px-2 rounded">${i}</span>`).join(' ');
+    // Hide the picked word and mark it visually
+    const btn = document.getElementById(`order-item-${idx}`);
+    if (btn) {
+        btn.classList.add('bg-amber', 'text-black', 'border-amber', 'opacity-50', 'pointer-events-none');
+    }
+    document.getElementById('order-drop-zone').innerHTML = orderedItems.map((i, index) =>
+        `<span class="bg-amber/20 border border-amber px-3 py-1 rounded-lg text-amber font-medium">${i}</span>`
+    ).join(' ');
 }
 
 function resetOrder() {
@@ -699,13 +706,37 @@ function checkAnswer(type, selectedIdx = null) {
         }
 
     } else if (type === 'order') {
-        // Naive check for order - for demo purposes we assume if they filled it, it acts as submitted
-        // But let's check length at least
-        if (orderedItems.length > 0) isCorrect = true;
+        // Check if order matches the correct answer
+        const q = currentQuizQuestions[currentQuestionIndex];
+        if (orderedItems.length === q.correctOrder.length) {
+            isCorrect = orderedItems.every((item, idx) => item === q.correctOrder[idx]);
+        }
+        // Show feedback on words
+        const dropZone = document.getElementById('order-drop-zone');
+        if (isCorrect) {
+            dropZone.classList.add('border-emerald', 'bg-emerald/10');
+        } else {
+            dropZone.classList.add('border-rose', 'bg-rose/10');
+            // Show correct order
+            dropZone.innerHTML += `<div class="w-full mt-2 text-xs text-emerald">Correct: ${q.correctOrder.join(' ')}</div>`;
+        }
     } else {
-        let userAns = document.getElementById('quiz-answer-display') ? document.getElementById('quiz-answer-display').innerText.toLowerCase() : "";
+        // Voice/text answer - compare with correct answer
+        const q = currentQuizQuestions[currentQuestionIndex];
+        let userAns = document.getElementById('quiz-answer-display') ? document.getElementById('quiz-answer-display').innerText.toLowerCase().trim() : "";
         if (userAns.includes("tap mic") || userAns.includes("কথা বলতে")) userAns = "";
-        if (userAns.length > 2) isCorrect = true;
+
+        const correctAns = (q.correctAnswer || "").toLowerCase().trim();
+        // Check if answer contains key terms or is similar
+        if (userAns.length > 2 && correctAns) {
+            isCorrect = userAns.includes(correctAns) || correctAns.includes(userAns) ||
+                userAns.split(' ').some(word => correctAns.includes(word) && word.length > 3);
+        }
+        // Show correct answer if wrong
+        const display = document.getElementById('quiz-answer-display');
+        if (!isCorrect && correctAns && display) {
+            display.innerHTML += `<br><span class="text-emerald text-sm">Correct: ${q.correctAnswer}</span>`;
+        }
     }
 
     if (isCorrect) {
