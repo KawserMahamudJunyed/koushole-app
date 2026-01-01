@@ -925,7 +925,7 @@ async function sendMessage() {
 
     chatContainer.innerHTML += `
         <div class="flex gap-3 flex-row-reverse animate-fade-in-up">
-            <div class="w-8 h-8 rounded-full bg-divider flex items-center justify-center text-text-secondary text-xs">KM</div>
+            <div class="w-8 h-8 rounded-full bg-divider flex items-center justify-center text-text-secondary text-xs">${(userProfile.nickname || userProfile.name || 'U')[0].toUpperCase()}</div>
             <div class="bg-amber text-black font-medium p-3 rounded-2xl rounded-tr-none max-w-[85%] text-sm shadow-amber-glow body-font">
                 ${text || "Sent attachments"}
                 ${attachmentHTML}
