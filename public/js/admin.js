@@ -1,17 +1,9 @@
 
 document.addEventListener('DOMContentLoaded', async () => {
 
-    // Check if user is logged in
-    const session = await window.supabaseClient.auth.getSession();
-    if (!session.data.session) {
-        alert("You must be logged in to access this page.");
-        window.location.href = '/';
-        return;
-    }
-
-    const userEmail = session.data.session.user.email;
-    console.log("Logged in as:", userEmail);
-
+    // -------------------------------------------------------------------
+    // UI ELEMENTS & FALLBACK DATA
+    // -------------------------------------------------------------------
     const form = document.getElementById('upload-form');
     const statusMsg = document.getElementById('status-msg');
     const submitBtn = document.getElementById('submit-btn');
@@ -19,9 +11,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const classSelect = document.getElementById('class-level');
     const subjectSelect = document.getElementById('subject');
 
-    // -------------------------------------------------------------------
-    // FALLBACK DATA (IN CASE subjects.js FAILS TO LOAD)
-    // -------------------------------------------------------------------
     const FALLBACK_SUBJECTS_9_10 = {
         'Common': ['Bangla 1st Paper', 'Bangla 2nd Paper', 'English 1st Paper', 'English 2nd Paper', 'ICT', 'Religion (Islam)', 'Religion (Hindu)', 'Career Education', 'Physical Education', 'Arts & Crafts'],
         'Science': ['Physics', 'Chemistry', 'Higher Math', 'Biology', 'Agriculture Studies', 'Bangladesh & Global Studies'],
@@ -45,9 +34,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // -------------------------------------------------------------------
-    // SUBJECT LOADING LOGIC
+    // SUBJECT LOADING LOGIC (RUNS IMMEDIATELY)
     // -------------------------------------------------------------------
     function updateSubjects() {
+        // Safe access to values with defaults
         const group = groupSelect ? groupSelect.value : 'Science';
         const className = classSelect ? classSelect.value : '9';
 
@@ -75,8 +65,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (groupSelect) groupSelect.addEventListener('change', updateSubjects);
     if (classSelect) classSelect.addEventListener('change', updateSubjects);
 
-    // Initial Load
-    setTimeout(updateSubjects, 100);
+    // TRIGGER NOW - DO NOT WAIT FOR AUTH
+    updateSubjects();
+
+    // -------------------------------------------------------------------
+    // AUTHENTICATION CHECK (ASYNC)
+    // -------------------------------------------------------------------
+    const session = await window.supabaseClient.auth.getSession();
+    if (!session.data.session) {
+        alert("You must be logged in to access this page.");
+        window.location.href = '/';
+        return;
+    }
+
+    const userEmail = session.data.session.user.email;
+    console.log("Logged in as:", userEmail);
 
     // -------------------------------------------------------------------
     // UPLOAD LOGIC
@@ -143,6 +146,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             showStatus('✅ Upload Successful!', 'text-green-500 font-bold');
             form.reset();
+            // Re-trigger update after reset to restore defaults
             setTimeout(updateSubjects, 100);
 
         } catch (error) {
