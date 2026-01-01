@@ -42,6 +42,9 @@ waitForSupabase(() => {
             isAuthenticated = true;
             currentUserId = session.user.id;
             await loadUserData(currentUserId); // Fetch from Supabase
+            // Load user-specific data immediately when session restores
+            fetchLibraryBooks();
+            fetchChatHistory();
         } else {
             console.log("Logged out - Resetting State");
             isAuthenticated = false;
