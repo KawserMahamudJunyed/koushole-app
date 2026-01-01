@@ -403,42 +403,43 @@
                                 placeholder="e.g. Architecture" disabled>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Common Fields -->
-                    <div class="space-y-1.5">
-                        <label class="text-[11px] uppercase font-bold text-text-secondary tracking-wider pl-1"
-                            data-key="emailLabel">Email</label>
-                        <input type="email" name="email"
-                            class="w-full bg-surface border border-divider rounded-lg px-4 h-12 text-text-primary text-sm focus:border-amber outline-none transition-colors"
-                            placeholder="hello@example.com" required>
-                    </div>
+                <!-- Common Fields -->
+                <div class="space-y-1.5">
+                    <label class="text-[11px] uppercase font-bold text-text-secondary tracking-wider pl-1"
+                        data-key="emailLabel">Email</label>
+                    <input type="email" name="email"
+                        class="w-full bg-surface border border-divider rounded-lg px-4 h-12 text-text-primary text-sm focus:border-amber outline-none transition-colors"
+                        placeholder="hello@example.com" required>
+                </div>
 
-                    <div class="space-y-1.5">
-                        <label class="text-[11px] uppercase font-bold text-text-secondary tracking-wider pl-1"
-                            data-key="passwordLabel">Password</label>
-                        <input type="password" name="password"
-                            class="w-full bg-surface border border-divider rounded-lg px-4 h-12 text-text-primary text-sm focus:border-amber outline-none transition-colors"
-                            placeholder="••••••••" required>
-                    </div>
+                <div class="space-y-1.5">
+                    <label class="text-[11px] uppercase font-bold text-text-secondary tracking-wider pl-1"
+                        data-key="passwordLabel">Password</label>
+                    <input type="password" name="password"
+                        class="w-full bg-surface border border-divider rounded-lg px-4 h-12 text-text-primary text-sm focus:border-amber outline-none transition-colors"
+                        placeholder="••••••••" required>
+                </div>
 
-                    <!-- Remember Me & Forgot Password (Login Only) -->
-                    <div id="login-extras" class="flex justify-between items-center text-sm">
-                        <label
-                            class="flex items-center gap-2 cursor-pointer text-text-secondary hover:text-text-primary transition-colors">
-                            <input type="checkbox" name="rememberMe" class="w-4 h-4 accent-amber rounded">
-                            <span data-key="rememberMe">Remember me</span>
-                        </label>
-                        <button type="button" onclick="showForgotPassword()"
-                            class="text-amber hover:underline text-sm font-medium" data-key="forgotPassword">
-                            Forgot Password?
-                        </button>
-                    </div>
-
-                    <button type="submit" id="auth-submit-btn"
-                        class="w-full bg-amber text-black font-bold h-12 flex items-center justify-center rounded-lg shadow-md hover:shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all mt-4"
-                        data-key="loginBtn">
-                        Log In
+                <!-- Remember Me & Forgot Password (Login Only) -->
+                <div id="login-extras" class="flex justify-between items-center text-sm">
+                    <label
+                        class="flex items-center gap-2 cursor-pointer text-text-secondary hover:text-text-primary transition-colors">
+                        <input type="checkbox" name="rememberMe" class="w-4 h-4 accent-amber rounded">
+                        <span data-key="rememberMe">Remember me</span>
+                    </label>
+                    <button type="button" onclick="showForgotPassword()"
+                        class="text-amber hover:underline text-sm font-medium" data-key="forgotPassword">
+                        Forgot Password?
                     </button>
+                </div>
+
+                <button type="submit" id="auth-submit-btn"
+                    class="w-full bg-amber text-black font-bold h-12 flex items-center justify-center rounded-lg shadow-md hover:shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all mt-4"
+                    data-key="loginBtn">
+                    Log In
+                </button>
             </form>
 
             <button onclick="toggleAuthMode()"
