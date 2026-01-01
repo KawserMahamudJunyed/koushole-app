@@ -1,11 +1,5 @@
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // -------------------------------------------------------------------
-    // SECURITY CONFIG
-    // -------------------------------------------------------------------
-    // Replace this with your specific email to prevent unauthorized uploads
-    // even if someone clones the repo.
-    const ALLOWED_ADMINS = ['YOUR_EMAIL@example.com', 'admin@koushole.com'];
 
     // Check if user is logged in
     const session = await window.supabaseClient.auth.getSession();
@@ -18,23 +12,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const userEmail = session.data.session.user.email;
     console.log("Logged in as:", userEmail);
 
-    // Strict Admin Check (Client-Side)
-    // Note: RLS (Database Policy) is the real security, but this UI check prevents accidental misuse.
-    // Uncomment the block below to enable strict email checking!
-    /*
-    if (!ALLOWED_ADMINS.includes(userEmail)) {
-        document.body.innerHTML = `
-            <div style="display:flex;justify-content:center;align-items:center;height:100vh;flex-direction:column;color:white;background:#0a0a0a;">
-                <h1 style="color:red;font-size:2rem;">🚫 Access Denied</h1>
-                <p>You are not authorized to upload official resources.</p>
-                <p>User: ${userEmail}</p>
-                <a href="/" style="color:#F59E0B;margin-top:20px;">Return Home</a>
-            </div>
-        `;
-        return;
-    }
-    */
-
     const form = document.getElementById('upload-form');
     const statusMsg = document.getElementById('status-msg');
     const submitBtn = document.getElementById('submit-btn');
@@ -43,10 +20,34 @@ document.addEventListener('DOMContentLoaded', async () => {
     const subjectSelect = document.getElementById('subject');
 
     // -------------------------------------------------------------------
-    // SUBJECT LOADING LOGIC (DEBUGGED)
+    // FALLBACK DATA (IN CASE subjects.js FAILS TO LOAD)
+    // -------------------------------------------------------------------
+    const FALLBACK_SUBJECTS_9_10 = {
+        'Common': ['Bangla 1st Paper', 'Bangla 2nd Paper', 'English 1st Paper', 'English 2nd Paper', 'ICT', 'Religion (Islam)', 'Religion (Hindu)', 'Career Education', 'Physical Education', 'Arts & Crafts'],
+        'Science': ['Physics', 'Chemistry', 'Higher Math', 'Biology', 'Agriculture Studies', 'Bangladesh & Global Studies'],
+        'Commerce': ['Accounting', 'Finance & Banking', 'Business Org & Mgt', 'Marketing', 'Production Mgt', 'Statistics', 'Science (General)'],
+        'Humanities': ['Economics', 'Civics & Good Governance', 'History', 'Geography', 'Sociology', 'Science (General)']
+    };
+
+    const FALLBACK_SUBJECTS_11_12 = {
+        'Common': ['Bangla 1st Paper', 'Bangla 2nd Paper', 'English 1st Paper', 'English 2nd Paper', 'ICT'],
+        'Science': ['Physics 1st Paper', 'Physics 2nd Paper', 'Chemistry 1st Paper', 'Chemistry 2nd Paper', 'Higher Math 1st Paper', 'Higher Math 2nd Paper', 'Biology 1st Paper', 'Biology 2nd Paper'],
+        'Commerce': ['Accounting 1st Paper', 'Accounting 2nd Paper', 'Finance, Banking & Ins 1st Paper', 'Finance, Banking & Ins 2nd Paper', 'Business Org & Mgt 1st Paper', 'Business Org & Mgt 2nd Paper', 'Marketing 1st Paper', 'Marketing 2nd Paper'],
+        'Humanities': ['Economics 1st Paper', 'Economics 2nd Paper', 'Geography 1st Paper', 'Geography 2nd Paper', 'History 1st Paper', 'History 2nd Paper', 'Civics & Good Governance 1st Paper', 'Civics & Good Governance 2nd Paper', 'Sociology 1st Paper', 'Sociology 2nd Paper', 'Social Work 1st Paper', 'Social Work 2nd Paper']
+    };
+
+    function getSubjectsFallback(group, className) {
+        const isHSC = ['11', '12', '11-12'].includes(String(className));
+        const data = isHSC ? FALLBACK_SUBJECTS_11_12 : FALLBACK_SUBJECTS_9_10;
+        let list = [...(data['Common'] || [])];
+        if (group && data[group]) list = [...list, ...data[group]];
+        return [...new Set(list)];
+    }
+
+    // -------------------------------------------------------------------
+    // SUBJECT LOADING LOGIC
     // -------------------------------------------------------------------
     function updateSubjects() {
-        // Safe access to values
         const group = groupSelect ? groupSelect.value : 'Science';
         const className = classSelect ? classSelect.value : '9';
 
@@ -54,23 +55,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         let subjects = [];
 
-        // Method 1: Try Global Helper (Preferred)
+        // Method 1: Try Global Helper
         if (window.getSubjects) {
             subjects = window.getSubjects(group, className);
+        } else {
+            // Method 2: Use Local Fallback
+            console.warn("⚠️ window.getSubjects missing, using local fallback");
+            subjects = getSubjectsFallback(group, className);
         }
-        // Method 2: Fallback to Direct Map (Legacy/Debug)
-        else if (window.subjectsByGroup) {
-            console.warn("⚠️ window.getSubjects missing, falling back to simple mapping");
-            subjects = window.subjectsByGroup[group] || [];
-        }
-        // Method 3: Emergency Fallback
-        else {
-            console.error("❌ No subject data found (subjects.js likely not loaded)");
-            subjectSelect.innerHTML = '<option value="">Error: Subjects not loaded</option>';
-            return;
-        }
-
-        console.log(`✅ Found ${subjects.length} subjects`); // Debug log
 
         if (subjects.length === 0) {
             subjectSelect.innerHTML = '<option value="">No subjects available</option>';
@@ -81,9 +73,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Attach Listeners
     if (groupSelect) groupSelect.addEventListener('change', updateSubjects);
-    if (classSelect) classSelect.addEventListener('change', updateSubjects); // Crucial for Class 11-12 switch
+    if (classSelect) classSelect.addEventListener('change', updateSubjects);
 
-    // Initial Load - Delay slightly to ensure subjects.js parses
+    // Initial Load
     setTimeout(updateSubjects, 100);
 
     // -------------------------------------------------------------------
@@ -109,12 +101,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (group !== 'Common') {
             finalTitle += ` [${group}]`;
         }
-
-        if (version === 'English') {
-            finalTitle += ' (English Version)';
-        } else {
-            finalTitle += ' (Bangla Medium)';
-        }
+        finalTitle += (version === 'English') ? ' (English Version)' : ' (Bangla Medium)';
 
         if (!file) {
             showStatus('Please select a PDF file.', 'text-red-500');
@@ -124,14 +111,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         try {
-            // 1. Upload File to Storage
             const fileExt = file.name.split('.').pop();
-            // Sanitize filename to avoid weird character issues
             const safeSubject = subject.replace(/[^a-zA-Z0-9]/g, '');
             const fileName = `${classLevel}_${safeSubject}_${Date.now()}.${fileExt}`;
             const filePath = `${fileName}`;
-
-            console.log("📤 Uploading file to storage:", filePath);
 
             const { data: uploadData, error: uploadError } = await window.supabaseClient
                 .storage
@@ -140,14 +123,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             if (uploadError) throw uploadError;
 
-            // 2. Get Public URL
             const { data: { publicUrl } } = window.supabaseClient
                 .storage
                 .from('official-books')
                 .getPublicUrl(filePath);
 
-            // 3. Insert into Database
-            console.log("💾 Saving metadata to DB:", finalTitle);
             const { error: dbError } = await window.supabaseClient
                 .from('official_resources')
                 .insert({
@@ -156,14 +136,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                     class_level: classLevel,
                     file_url: publicUrl,
                     cover_url: null,
-                    uploaded_by: userEmail // Track who uploaded it
+                    uploaded_by: userEmail
                 });
 
             if (dbError) throw dbError;
 
             showStatus('✅ Upload Successful!', 'text-green-500 font-bold');
             form.reset();
-            // Reset subjects after reset
             setTimeout(updateSubjects, 100);
 
         } catch (error) {

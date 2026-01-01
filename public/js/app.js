@@ -519,19 +519,48 @@ async function saveChatMessage(role, content) {
 }
 
 // Clear Chat History
+// Clear Chat History
 async function clearChatHistory() {
     if (!window.supabaseClient || !currentUserId) return;
     if (!confirm('Are you sure you want to delete all chat history?')) return;
 
+    // Immediate UI feedback
+    const chatContainer = document.getElementById('chat-messages');
+    if (chatContainer) chatContainer.innerHTML = '';
+
+    // Clear sidebar list if open
+    const historyList = document.getElementById('chat-history-list');
+    if (historyList) historyList.innerHTML = '<p class="text-text-secondary text-xs italic">Clearing...</p>';
+
     try {
-        await window.supabaseClient
+        const { error } = await window.supabaseClient
             .from('chat_history')
             .delete()
             .eq('user_id', currentUserId);
 
-        loadChatHistory(); // Refresh
+        if (error) throw error;
+
+        // Refresh both views
+        await loadChatHistory(); // Sidebar
+        await fetchChatHistory(); // Main Chat
+
+        // Show success toast/message
+        if (chatContainer) {
+            chatContainer.innerHTML = `
+                <div class="flex gap-3 group animate-fade-in-up">
+                    <div class="w-8 h-8 rounded-full bg-amber/20 border border-amber/50 flex items-center justify-center text-amber text-xs">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="bg-surface border border-divider text-text-primary p-3 rounded-2xl rounded-tl-none max-w-[85%] text-sm leading-relaxed shadow-sm transition-colors prose prose-invert prose-sm">
+                        <span>Chat history cleared! How can I help you now?</span>
+                    </div>
+                </div>
+            `;
+        }
+
     } catch (error) {
         console.error('Failed to clear history:', error);
+        alert("Failed to clear history. Please try again.");
     }
 }
 
