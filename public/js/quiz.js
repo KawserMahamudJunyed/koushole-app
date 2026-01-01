@@ -502,6 +502,8 @@ function renderQuestion() {
     if (q.type === 'text') q.type = 'voice';
 
     document.getElementById('feedback-area').classList.add('hidden');
+    // Reset question header display (in case previous was fill_gap)
+    document.getElementById('quiz-question-text').style.display = '';
     const container = document.getElementById('input-container');
     container.innerHTML = '';
 
@@ -516,13 +518,16 @@ function renderQuestion() {
         });
     }
     else if (q.type === 'fill_gap') {
+        // Hide the main question header since we show formatted version below
+        document.getElementById('quiz-question-text').style.display = 'none';
+
         const optionsHtml = q.options.map((opt, idx) =>
             `<button onclick="checkAnswer('fill_gap', ${idx})" class="quiz-option px-4 py-2 bg-surface border border-divider rounded-full text-sm font-bold hover:border-amber transition-colors">${opt}</button>`
         ).join(' ');
 
         container.innerHTML = `
             <div class="p-4 bg-midnight rounded-xl border border-divider text-lg font-medium text-center mb-4">
-                ${q.question.replace('___', '<span class="text-amber border-b-2 border-amber px-2">?</span>')}
+                ${q.question.replace(/___+|\?_+|_+\?/g, '<span class="text-amber border-b-2 border-amber px-4">_____</span>')}
             </div>
             <div class="flex flex-wrap gap-2 justify-center">
                 ${optionsHtml}
@@ -619,13 +624,13 @@ function selectMatch(side, idx) {
     const firstItem = matchState.selectedItem;
     // const secondItem = { side, index: idx, elementId: btnId };
 
-    // Cycle through matchColors defined in data.js
+    // Use consistent dark background for both matched items
     const colorClass = matchColors[matchState.colorIndex % matchColors.length];
 
     const firstBtn = document.getElementById(firstItem.elementId);
-    firstBtn.className = `match-item w-full p-3 rounded-lg text-sm font-bold mb-2 text-${firstItem.side === 'left' ? 'left' : 'right'} transition-all relative match-paired ${colorClass}`;
+    firstBtn.className = `match-item w-full p-3 rounded-lg text-sm font-bold mb-2 text-${firstItem.side === 'left' ? 'left' : 'right'} transition-all relative match-paired bg-surface/80 border-2 ${colorClass}`;
 
-    btn.className = `match-item w-full p-3 rounded-lg text-sm font-bold mb-2 text-${side === 'left' ? 'left' : 'right'} transition-all relative match-paired ${colorClass}`;
+    btn.className = `match-item w-full p-3 rounded-lg text-sm font-bold mb-2 text-${side === 'left' ? 'left' : 'right'} transition-all relative match-paired bg-surface/80 border-2 ${colorClass}`;
 
     const leftIdx = side === 'left' ? idx : firstItem.index;
     const rightIdx = side === 'right' ? idx : firstItem.index;

@@ -603,9 +603,13 @@ async function fetchLibraryBooks() {
         const { data, error } = await window.supabaseClient
             .from('library_books')
             .select('*')
+            .eq('user_id', user.id)
             .order('created_at', { ascending: false });
 
-        if (error) throw error;
+        if (error) {
+            console.error('Library fetch error:', error);
+            throw error;
+        }
 
         if (data && data.length > 0) {
             libraryBooks = data.map(book => ({
