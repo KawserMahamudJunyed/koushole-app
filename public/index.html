@@ -674,6 +674,11 @@
                         title="Upload Image">
                         <i class="fas fa-image hover:rotate-12 transition-transform"></i>
                     </button>
+                    <button onclick="generateDiagram()"
+                        class="w-10 h-10 rounded-full bg-surface border border-divider flex items-center justify-center text-text-secondary hover:text-emerald transition-colors hover:scale-110 active:scale-90 transition-transform shrink-0"
+                        title="Generate AI Diagram">
+                        <i class="fas fa-wand-magic-sparkles hover:rotate-12 transition-transform"></i>
+                    </button>
 
                     <div class="relative flex-1">
                         <input type="text" id="chat-input" placeholder="Ask about Physics, Math..."
@@ -873,6 +878,29 @@
                     data-key="account">Account</h3>
 
                 <div class="bg-surface border border-divider rounded-xl overflow-hidden transition-colors">
+                    <!-- Chat History - Expandable -->
+                    <div id="chat-history-header" onclick="toggleChatHistory()"
+                        class="p-4 flex items-center justify-between border-b border-divider cursor-pointer hover:bg-white/5 active:bg-white/10 transition-colors">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-clock-rotate-left text-text-secondary w-5"></i>
+                            <span class="text-text-primary text-sm font-medium" data-key="chatHistory">Chat
+                                History</span>
+                        </div>
+                        <i id="chat-history-arrow"
+                            class="fas fa-chevron-right text-text-secondary text-xs transition-transform"></i>
+                    </div>
+                    <!-- Chat History Content -->
+                    <div id="chat-history-content"
+                        class="hidden bg-midnight/50 p-4 space-y-3 border-b border-divider max-h-64 overflow-y-auto">
+                        <div id="chat-history-list" class="space-y-2">
+                            <p class="text-text-secondary text-xs italic">Loading chat history...</p>
+                        </div>
+                        <button onclick="clearChatHistory()"
+                            class="w-full mt-2 py-2 text-xs text-rose border border-rose/30 rounded-lg hover:bg-rose/10 transition-colors">
+                            <i class="fas fa-trash-alt mr-1"></i> Clear History
+                        </button>
+                    </div>
+
                     <!-- Personal Details - Expandable -->
                     <div id="personal-details-header" onclick="togglePersonalDetails()"
                         class="p-4 flex items-center justify-between border-b border-divider cursor-pointer hover:bg-white/5 active:bg-white/10 transition-colors">

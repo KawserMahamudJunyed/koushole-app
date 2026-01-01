@@ -457,6 +457,86 @@ function togglePersonalDetails() {
     }
 }
 
+// Toggle Chat History section
+function toggleChatHistory() {
+    const content = document.getElementById('chat-history-content');
+    const arrow = document.getElementById('chat-history-arrow');
+
+    if (content.classList.contains('hidden')) {
+        content.classList.remove('hidden');
+        arrow.classList.add('rotate-180');
+        loadChatHistory();
+    } else {
+        content.classList.add('hidden');
+        arrow.classList.remove('rotate-180');
+    }
+}
+
+// Load Chat History from Supabase
+async function loadChatHistory() {
+    if (!window.supabaseClient || !currentUserId) return;
+
+    const listEl = document.getElementById('chat-history-list');
+    listEl.innerHTML = '<p class="text-text-secondary text-xs italic">Loading...</p>';
+
+    try {
+        const { data, error } = await window.supabaseClient
+            .from('chat_messages')
+            .select('*')
+            .eq('user_id', currentUserId)
+            .order('created_at', { ascending: false })
+            .limit(50);
+
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+            listEl.innerHTML = '<p class="text-text-secondary text-xs italic">No chat history yet. Start a conversation!</p>';
+            return;
+        }
+
+        listEl.innerHTML = data.map(msg => `
+            <div class="p-2 rounded-lg ${msg.role === 'user' ? 'bg-amber/10 text-amber' : 'bg-white/5 text-text-primary'} text-xs">
+                <span class="font-bold">${msg.role === 'user' ? 'You' : 'Koushole'}:</span>
+                <span class="ml-1">${msg.content.substring(0, 100)}${msg.content.length > 100 ? '...' : ''}</span>
+                <span class="block text-[9px] text-text-secondary mt-1">${new Date(msg.created_at).toLocaleString()}</span>
+            </div>
+        `).join('');
+    } catch (error) {
+        console.error('Chat history error:', error);
+        listEl.innerHTML = '<p class="text-rose text-xs">Failed to load history</p>';
+    }
+}
+
+// Save chat message to Supabase
+async function saveChatMessage(role, content) {
+    if (!window.supabaseClient || !currentUserId) return;
+
+    try {
+        await window.supabaseClient
+            .from('chat_messages')
+            .insert([{ user_id: currentUserId, role, content }]);
+    } catch (error) {
+        console.error('Failed to save message:', error);
+    }
+}
+
+// Clear Chat History
+async function clearChatHistory() {
+    if (!window.supabaseClient || !currentUserId) return;
+    if (!confirm('Are you sure you want to delete all chat history?')) return;
+
+    try {
+        await window.supabaseClient
+            .from('chat_messages')
+            .delete()
+            .eq('user_id', currentUserId);
+
+        loadChatHistory(); // Refresh
+    } catch (error) {
+        console.error('Failed to clear history:', error);
+    }
+}
+
 // Populate Personal Details fields
 function populatePersonalDetails() {
     const setField = (id, value) => {
@@ -973,6 +1053,10 @@ async function sendMessage() {
         document.getElementById(typingId).remove();
         appendAIMessage(aiText);
 
+        // Save both messages to history
+        saveChatMessage('user', text);
+        saveChatMessage('assistant', aiText);
+
     } catch (error) {
         document.getElementById(typingId).remove();
         appendAIMessage(`⚠️ **System Error**: ${error.message}`);
@@ -991,6 +1075,73 @@ function appendAIMessage(markdownText) {
             </div>
         </div>`;
     chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
+// Generate educational diagram using AI
+async function generateDiagram() {
+    const input = document.getElementById('chat-input');
+    const prompt = input.value.trim();
+
+    if (!prompt) {
+        alert('Please type what diagram you want (e.g., "Pythagorean theorem", "Cell structure")');
+        return;
+    }
+
+    const chatContainer = document.getElementById('chat-messages');
+
+    // Show user message
+    chatContainer.innerHTML += `
+        <div class="flex gap-3 flex-row-reverse animate-fade-in-up">
+            <div class="w-8 h-8 rounded-full bg-divider flex items-center justify-center text-text-secondary text-xs">${(userProfile.nickname || userProfile.name || 'U')[0].toUpperCase()}</div>
+            <div class="bg-amber text-black font-medium p-3 rounded-2xl rounded-tr-none max-w-[85%] text-sm shadow-amber-glow body-font">
+                🎨 Generate diagram: ${prompt}
+            </div>
+        </div>`;
+
+    input.value = '';
+
+    // Show generating message
+    const loadingId = 'img-loading-' + Date.now();
+    chatContainer.innerHTML += `
+        <div id="${loadingId}" class="flex gap-3 animate-fade-in-up">
+            <div class="w-8 h-8 rounded-full bg-emerald/20 border border-emerald/50 flex items-center justify-center text-emerald text-xs"><i class="fas fa-wand-magic-sparkles"></i></div>
+            <div class="bg-surface border border-divider p-3 rounded-2xl rounded-tl-none text-text-secondary text-xs italic">
+                <i class="fas fa-spinner fa-spin mr-2"></i>Generating diagram... (this may take 10-30 seconds)
+            </div>
+        </div>`;
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+
+    try {
+        const response = await fetch('/api/generate-image', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ prompt })
+        });
+
+        if (!response.ok) {
+            const errData = await response.json().catch(() => ({}));
+            throw new Error(errData.error || `Server Error ${response.status}`);
+        }
+
+        const data = await response.json();
+        document.getElementById(loadingId).remove();
+
+        // Show the generated image
+        chatContainer.innerHTML += `
+            <div class="flex gap-3 animate-fade-in-up">
+                <div class="w-8 h-8 rounded-full bg-emerald/20 border border-emerald/50 flex items-center justify-center text-emerald text-xs"><i class="fas fa-wand-magic-sparkles"></i></div>
+                <div class="bg-surface border border-divider p-3 rounded-2xl rounded-tl-none max-w-[85%]">
+                    <p class="text-text-secondary text-xs mb-2">📊 Generated diagram for: "${prompt}"</p>
+                    <img src="${data.image}" alt="${prompt}" class="rounded-lg max-w-full shadow-lg" />
+                </div>
+            </div>`;
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+
+    } catch (error) {
+        document.getElementById(loadingId).remove();
+        appendAIMessage(`⚠️ **Image Generation Error**: ${error.message}`);
+        console.error(error);
+    }
 }
 
 // --- INIT ---
