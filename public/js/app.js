@@ -610,12 +610,29 @@ async function fetchLibraryBooks() {
         }
 
         if (data && data.length > 0) {
-            libraryBooks = data.map(book => ({
+            // Filter out books with null URLs (failed uploads or old fake data)
+            const validBooks = data.filter(book => book.file_url && book.file_url.startsWith('http'));
+
+            if (validBooks.length === 0) {
+                // Show empty state if all were invalid
+                const list = document.getElementById('library-list');
+                if (list) {
+                    list.innerHTML = `
+                     <div class="text-center text-text-secondary text-sm py-8">
+                         <i class="fas fa-book-open text-4xl mb-4 opacity-50"></i>
+                         <p data-key="noBooksYet">No books uploaded yet. Upload a book above to get started!</p>
+                     </div>`;
+                }
+                return;
+            }
+
+            libraryBooks = validBooks.map(book => ({
                 name: book.title,
                 date: new Date(book.created_at).toLocaleDateString(),
                 status: book.index_status === 'done' ? 'Ready' : 'Processing',
                 color: book.index_status === 'done' ? 'sky' : 'amber',
-                file_type: book.file_type || 'pdf'
+                file_type: book.file_type || 'pdf',
+                url: book.file_url // Pass the URL to the renderer
             }));
             renderLibrary();
         } else {
