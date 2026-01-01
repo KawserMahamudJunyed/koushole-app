@@ -529,8 +529,9 @@ function renderQuestion() {
         ).join(' ');
 
         container.innerHTML = `
-            <div class="p-4 bg-midnight rounded-xl border border-divider text-lg font-medium text-center mb-4">
-                ${q.question.replace(/___+|\?_+|_+\?/g, '<span class="text-amber border-b-2 border-amber px-4">_____</span>')}
+            <div class="p-4 bg-midnight rounded-xl border border-divider text-lg font-medium text-center mb-4 leading-loose">
+                ${(q.question.match(/_{3,}|…|\.\.\.|\[gap\]/) ? q.question : q.question + ' _____')
+                .replace(/_{3,}|…|\.\.\.|\[gap\]/g, '<span class="inline-block min-w-[60px] border-b-2 border-amber px-2 text-amber font-bold mx-1">?</span>')}
             </div>
             <div class="flex flex-wrap gap-2 justify-center">
                 ${optionsHtml}
@@ -758,16 +759,30 @@ function checkAnswer(type, selectedIdx = null) {
                 </div>`;
         }
     } else {
-        // Voice/text answer - compare with correct answer
+        // Voice/text answer - smarter fuzzy match
         const q = currentQuizQuestions[currentQuestionIndex];
         let userAns = document.getElementById('quiz-answer-display') ? document.getElementById('quiz-answer-display').innerText.toLowerCase().trim() : "";
+
+        // Filter out system messages
         if (userAns.includes("tap mic") || userAns.includes("কথা বলতে")) userAns = "";
 
-        const correctAns = (q.correctAnswer || "").toLowerCase().trim();
-        // Check if answer contains key terms or is similar
-        if (userAns.length > 2 && correctAns) {
-            isCorrect = userAns.includes(correctAns) || correctAns.includes(userAns) ||
-                userAns.split(' ').some(word => correctAns.includes(word) && word.length > 3);
+        const correctAns = (q.correctAnswer || q.answer || "").toLowerCase().trim();
+
+        // Tokenize and compare
+        const clean = (str) => str.replace(/[^\w\s\u0980-\u09FF]/g, '').split(/\s+/).filter(w => w.length > 1);
+        const uWords = clean(userAns);
+        const cWords = clean(correctAns);
+
+        // Check for specific numerical match (exact) or word overlap
+        const intersection = uWords.filter(w => cWords.includes(w));
+        const matchRatio = cWords.length > 0 ? intersection.length / cWords.length : 0;
+
+        if (cWords.length === 0) {
+            isCorrect = false;
+        } else if (uWords.join(' ') === cWords.join(' ')) {
+            isCorrect = true; // Exact match
+        } else if (matchRatio >= 0.6 || (cWords.length === 1 && userAns.includes(correctAns))) {
+            isCorrect = true; // 60% overlap or direct inclusion for single words
         }
         // Show correct answer if wrong
         const display = document.getElementById('quiz-answer-display');

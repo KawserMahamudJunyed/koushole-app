@@ -32,9 +32,12 @@ export default async function handler(req, res) {
         {
           role: 'system',
           content: `You are a strict JSON generator for an educational quiz app. 
-                    You must only return a valid JSON array of question objects. 
-                    Do not include Markdown formatting (no \`\`\`json). 
-                    Ensure keys: "type", "question", "topic", "options", "correctIndex", "pairs", "items", "answer", "hint", "explanation".`
+                    1. Return ONLY a valid JSON array of question objects.
+                    2. For "fill_gap" type, use EXACTLY 5 underscores (_____) to mark the gap.
+                    3. For "order" type, provide the full correct sentence in "answer".
+                    4. No Markdown formatting, no code blocks, just raw JSON.
+                    
+                    Required keys: "type", "question", "topic", "options", "correctIndex", "pairs", "items", "answer", "hint", "explanation".`
         },
         {
           role: 'user',
@@ -49,14 +52,14 @@ export default async function handler(req, res) {
 
     const rawContent = completion.choices[0]?.message?.content;
 
-    // Ensure the response is wrapped in the expected structure for the frontend
-    // The frontend expects { candidates: [ { content: { parts: [ { text: "JSON STRING" } ] } } ] }
-    // or we can adapt the frontend. Let's adapt the API response to match what the frontend parses,
-    // OR simply return clean JSON and update the frontend.
-    // CURRENT FRONTEND LOGIC: data.candidates[0].content.parts[0].text
+    // Robust JSON Extraction
+    let cleanJSON = rawContent;
+    const firstBracket = rawContent.indexOf('[');
+    const lastBracket = rawContent.lastIndexOf(']');
 
-    // We will mimic the Google Vertex AI structure to minimize frontend changes for now,
-    // OR better yet, let's keep it simple and update frontend to read data.quiz
+    if (firstBracket !== -1 && lastBracket !== -1) {
+      cleanJSON = rawContent.substring(firstBracket, lastBracket + 1);
+    }
 
     // Let's stick to the existing structure the frontend expects to avoid breaking it immediately,
     // BUT the clean way is to return { text: ... }.
@@ -66,11 +69,12 @@ export default async function handler(req, res) {
 
     // I will return the structure it expects to "trick" it into working without changing frontend logic yet.
 
+    // Let's stick to the existing structure the frontend expects
     res.status(200).json({
       candidates: [{
         content: {
           parts: [{
-            text: rawContent
+            text: cleanJSON
           }]
         }
       }]
