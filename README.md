@@ -4,7 +4,7 @@
 > *Your Personal AI-Powered Study Companion.*
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-amber.svg)
-![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)
+![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 
 **Koushole** is a next-generation EdTech platform built for the **MillionX Bangladesh National AI Build-a-thon 2026**. It merges the power of advanced Large Language Models (LLMs) with the official NCTB curriculum to create a hyper-personalized, gamified, and accessible learning experience for every student in Bangladesh.
