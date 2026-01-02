@@ -63,6 +63,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     updateSubjects();
 
+
     // -------------------------------------------------------------------
     // AUTHENTICATION CHECK
     // -------------------------------------------------------------------
@@ -76,6 +77,29 @@ document.addEventListener('DOMContentLoaded', async () => {
     const userEmail = session.user.email;
     const accessToken = session.access_token;
     console.log("✅ Logged in as:", userEmail);
+
+    // -------------------------------------------------------------------
+    // ADMIN EMAIL RESTRICTION
+    // -------------------------------------------------------------------
+    const ALLOWED_ADMINS = [
+        'admin@koushole.app',
+        'kawsermahamudjunyed@gmail.com' // Backup admin
+    ];
+
+    if (!ALLOWED_ADMINS.includes(userEmail.toLowerCase())) {
+        document.body.innerHTML = `
+            <div style="display:flex;justify-content:center;align-items:center;height:100vh;flex-direction:column;color:white;background:#0a0a0a;font-family:Outfit,sans-serif;">
+                <div style="font-size:80px;margin-bottom:20px;">🚫</div>
+                <h1 style="color:#EF4444;font-size:2rem;margin-bottom:10px;">Access Denied</h1>
+                <p style="color:#9CA3AF;margin-bottom:10px;">You are not authorized to upload official resources.</p>
+                <p style="color:#6B7280;font-size:0.8rem;">Logged in as: ${userEmail}</p>
+                <a href="/" style="color:#F59E0B;margin-top:30px;text-decoration:none;">← Return Home</a>
+            </div>
+        `;
+        return;
+    }
+
+    console.log("🔐 Admin access verified for:", userEmail);
 
     // -------------------------------------------------------------------
     // UPLOAD LOGIC WITH PROGRESS BAR
