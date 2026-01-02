@@ -26,9 +26,9 @@ export default async function handler(req, res) {
     }
 
     try {
-        // Use FLUX.1-schnell - fast, open source model great for diagrams
+        // Use FLUX.1-dev - higher quality model for better diagrams
         const response = await fetch(
-            "https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-schnell",
+            "https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-dev",
             {
                 method: "POST",
                 headers: {
@@ -36,8 +36,12 @@ export default async function handler(req, res) {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    inputs: `A clear, professional mathematical diagram showing: ${prompt}. 
-Style: Clean educational illustration, textbook quality, geometric shapes with clear labels, mathematical notation visible, black lines on white background, simple and accurate, no decorations, technical drawing style.`,
+                    inputs: `Educational diagram: ${prompt}. 
+Style: Professional textbook illustration, clean white background, precise geometric shapes, clearly labeled parts, mathematical accuracy, technical drawing, simple colors, high contrast, no decorative elements, scientific accuracy.`,
+                    parameters: {
+                        num_inference_steps: 30,
+                        guidance_scale: 7.5
+                    }
                 }),
             }
         );
