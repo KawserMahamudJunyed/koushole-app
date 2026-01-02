@@ -29,7 +29,7 @@ Koushole employs a sophisticated **Agentic AI Architecture** to deliver real-tim
 
 ### 3. "Diagram" Visualization Engine 🎨
 -   **Goal**: Visual learning on demand.
--   **Flow**: `Intent: "Draw..."` → `Prompt Refinement` → **FLUX.1-schnell (HF)** → `Visual Output`
+-   **Flow**: `Intent: "Draw..."` → `Prompt Refinement` → **FLUX.1-dev (HF)** → `Visual Output`
 -   **Innovation**: Instantly generates scientific diagrams within the chat interface.
 
 ---
@@ -160,7 +160,7 @@ Run these SQL scripts in Supabase SQL Editor:
 | **Backend** | Supabase (Auth, DB, Storage, RLS) |
 | **Orchestration** | Vercel Serverless Functions |
 | **AI (Logic)** | Llama 4 Scout (via Groq) |
-| **AI (Vision)** | FLUX.1-schnell (via Hugging Face) |
+| **AI (Vision)** | FLUX.1-dev (via Hugging Face) |
 
 ---
 
