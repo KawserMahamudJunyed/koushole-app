@@ -275,10 +275,10 @@ function toggleAuthPassword() {
     const icon = document.getElementById('auth-eye');
     if (input.type === 'password') {
         input.type = 'text';
-        icon.className = 'fa-regular fa-eye-slash';
+        icon.className = 'fa-regular fa-eye-slash text-lg';
     } else {
         input.type = 'password';
-        icon.className = 'fa-regular fa-eye';
+        icon.className = 'fa-regular fa-eye text-lg';
     }
 }
 
