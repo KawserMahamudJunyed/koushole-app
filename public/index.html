@@ -468,6 +468,47 @@
             </button>
         </div>
 
+        <!-- Forgot Password Modal -->
+        <div id="forgot-password-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
+            <!-- Backdrop -->
+            <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeForgotPasswordModal()"></div>
+
+            <!-- Modal Content -->
+            <div
+                class="relative bg-surface border border-white/10 rounded-2xl w-full max-w-md p-6 shadow-2xl animate-fade-in">
+                <div class="text-center mb-6">
+                    <div class="w-14 h-14 bg-amber/10 rounded-full mx-auto mb-4 flex items-center justify-center">
+                        <i class="fas fa-key text-amber text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">Reset Password</h3>
+                    <p class="text-text-secondary text-sm">Enter your email address to receive a password reset link.
+                    </p>
+                </div>
+
+                <form onsubmit="handleForgotPasswordSubmit(event)" class="space-y-4">
+                    <div class="space-y-1.5">
+                        <label class="text-[11px] uppercase font-bold text-text-secondary tracking-wider pl-1">Email
+                            Address</label>
+                        <input type="email" id="forgot-email" required
+                            class="w-full bg-black/50 border border-divider rounded-lg px-4 h-12 text-text-primary text-sm focus:border-amber outline-none transition-colors"
+                            placeholder="hello@example.com">
+                    </div>
+
+                    <div class="flex gap-3 pt-2">
+                        <button type="button" onclick="closeForgotPasswordModal()"
+                            class="flex-1 px-4 py-3 rounded-lg border border-divider text-text-secondary hover:text-white hover:bg-white/5 transition-colors text-sm font-medium">
+                            Cancel
+                        </button>
+                        <button type="submit" id="forgot-submit-btn"
+                            class="flex-1 bg-amber text-black font-bold py-3 rounded-lg hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all text-sm flex items-center justify-center gap-2">
+                            <span>Send Link</span>
+                            <i class="fas fa-paper-plane text-xs"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <div id="view-dashboard" class="hidden p-5 space-y-8 fade-in">
             <div>
                 <h1 id="dashboard-greeting" class="text-3xl font-bold text-text-primary title-font transition-colors"

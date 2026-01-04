@@ -325,9 +325,29 @@ function checkAuthPasswordStrength() {
 }
 
 // Password Reset
-async function showForgotPassword() {
-    const email = prompt("Enter your email address for password reset:");
+function showForgotPassword() {
+    document.getElementById('forgot-password-modal').classList.remove('hidden');
+    document.getElementById('forgot-email').focus();
+}
+
+function closeForgotPasswordModal() {
+    document.getElementById('forgot-password-modal').classList.add('hidden');
+    document.getElementById('forgot-email').value = '';
+}
+
+async function handleForgotPasswordSubmit(e) {
+    e.preventDefault();
+
+    const emailInput = document.getElementById('forgot-email');
+    const submitBtn = document.getElementById('forgot-submit-btn');
+    const originalBtnContent = submitBtn.innerHTML;
+
+    const email = emailInput.value.trim();
     if (!email) return;
+
+    // Set loading state
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
 
     try {
         const { error } = await window.supabaseClient.auth.resetPasswordForEmail(email, {
@@ -337,11 +357,27 @@ async function showForgotPassword() {
         if (error) {
             alert("Error: " + error.message);
         } else {
-            alert("Password reset email sent! Check your inbox.");
+            // Success state in modal
+            submitBtn.innerHTML = '<i class="fas fa-check"></i> Sent!';
+            submitBtn.classList.remove('bg-amber', 'text-black');
+            submitBtn.classList.add('bg-green-500', 'text-white');
+
+            setTimeout(() => {
+                alert("Password reset email sent! Check your inbox.");
+                closeForgotPasswordModal();
+
+                // Reset button state
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnContent;
+                submitBtn.classList.add('bg-amber', 'text-black');
+                submitBtn.classList.remove('bg-green-500', 'text-white');
+            }, 1000);
         }
     } catch (err) {
         console.error("Password reset error:", err);
         alert("Failed to send reset email. Please try again.");
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnContent;
     }
 }
 
