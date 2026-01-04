@@ -891,6 +891,27 @@
                             class="w-full bg-midnight border border-divider rounded-lg p-3 text-text-primary text-sm focus:border-amber outline-none">
                         </select>
                     </div>
+
+                    <!-- Question Count Selector -->
+                    <div>
+                        <label class="text-text-secondary text-[10px] uppercase font-bold tracking-wider mb-1 block"
+                            data-key="configQuestionCount">Number of Questions</label>
+                        <div class="flex gap-2">
+                            <select id="config-question-count"
+                                class="flex-1 bg-midnight border border-divider rounded-lg p-3 text-text-primary text-sm focus:border-amber outline-none"
+                                onchange="handleQuestionCountChange()">
+                                <option value="5">5 Questions</option>
+                                <option value="10" selected>10 Questions</option>
+                                <option value="15">15 Questions</option>
+                                <option value="20">20 Questions</option>
+                                <option value="25">25 Questions</option>
+                                <option value="custom">Custom...</option>
+                            </select>
+                            <input type="number" id="config-custom-count"
+                                class="hidden w-20 bg-midnight border border-divider rounded-lg p-3 text-text-primary text-sm focus:border-amber outline-none text-center"
+                                min="1" max="50" placeholder="#">
+                        </div>
+                    </div>
                 </div>
 
                 <button onclick="startCustomQuiz()"

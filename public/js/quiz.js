@@ -5,6 +5,8 @@ let selectedDifficulty = 'Medium';
 let currentQuizContext = 'General'; // 'General' or 'Book'
 let currentBookName = '';
 let currentQuizScore = 0;
+let selectedQuestionCount = 10; // Default question count
+let recentQuestions = []; // Track recent questions to avoid repetition
 
 let matchState = {
     selectedItem: null, // { side: 'left'|'right', index: number, elementId: string }
@@ -13,6 +15,31 @@ let matchState = {
 };
 
 let orderedItems = [];
+
+// --- QUESTION COUNT HANDLER ---
+function handleQuestionCountChange() {
+    const dropdown = document.getElementById('config-question-count');
+    const customInput = document.getElementById('config-custom-count');
+
+    if (dropdown.value === 'custom') {
+        customInput.classList.remove('hidden');
+        customInput.focus();
+    } else {
+        customInput.classList.add('hidden');
+        selectedQuestionCount = parseInt(dropdown.value);
+    }
+}
+
+function getSelectedQuestionCount() {
+    const dropdown = document.getElementById('config-question-count');
+    const customInput = document.getElementById('config-custom-count');
+
+    if (dropdown.value === 'custom' && customInput.value) {
+        const count = parseInt(customInput.value);
+        return Math.min(Math.max(count, 1), 50); // Clamp between 1-50
+    }
+    return parseInt(dropdown.value) || 10;
+}
 
 // --- SAVE QUIZ RESULTS TO SUPABASE ---
 async function saveQuizResultsToDatabase(earnedXP, accuracyPercent) {
@@ -320,43 +347,66 @@ async function startCustomQuiz() {
 
     const subject = document.getElementById('config-subject').value;
     const topic = document.getElementById('config-topic').value || "General";
+    const questionCount = getSelectedQuestionCount();
 
     const langInstruction = currentLang === 'bn'
         ? "Output questions entirely in Bangla language, BUT use English digits (0-9) for all numbers. Do not use Bangla numerals."
         : "Output in English.";
 
+    // Generate a random seed for variety
+    const randomSeed = Math.floor(Math.random() * 10000);
+
+    // Get student performance for personalization
+    const streak = userMemory?.day_streak || 0;
+    const accuracy = userMemory?.accuracy || 50;
+    const totalQuizzes = userMemory?.total_quizzes || 0;
+
     let promptContext = "";
     if (currentQuizContext === 'Book') {
-        promptContext = `Generate 5 quiz questions based on book "${currentBookName}". Focus on "${topic}".`;
+        promptContext = `Generate ${questionCount} UNIQUE quiz questions based on book "${currentBookName}". Focus on "${topic}".`;
     } else {
-        promptContext = `Generate 5 quiz questions for Subject: ${subject}, Topic: "${topic}".`;
+        promptContext = `Generate ${questionCount} UNIQUE quiz questions for Subject: ${subject}, Topic: "${topic}".`;
     }
 
-    if (userMemory.weaknesses.length > 0) {
-        promptContext += ` Student weaknesses: ${userMemory.weaknesses.join(', ')}. Include 1 question targeting these.`;
+    // Add student observation for personalization
+    promptContext += `\n\nSTUDENT PROFILE:
+- Quiz Experience: ${totalQuizzes} quizzes taken
+- Accuracy: ${accuracy}%
+- Streak: ${streak} days
+${accuracy < 60 ? '- Focus on EASIER questions with more hints' : ''}
+${accuracy > 80 ? '- Include some CHALLENGING questions' : ''}`;
+
+    if (userMemory.weaknesses && userMemory.weaknesses.length > 0) {
+        promptContext += `\n- Weak Areas: ${userMemory.weaknesses.join(', ')}. Include 2-3 questions targeting these.`;
     }
 
-    promptContext += ` Difficulty: ${selectedDifficulty}. ${langInstruction}
-    Mix these types: 
-    1. Multiple Choice (mcq)
-    2. Fill in the Gap (fill_gap) - provide 4 options including the answer.
-    3. Matching Pairs (match) - provide 2 or 3 pairs.
-    4. Order/Sentence Building (order) - provide a sentence or formula split into shuffled parts.
-    5. Voice Answer (voice)
-    
-    Return ONLY a valid JSON array. Structure:
-    {
-      "type": "mcq" | "fill_gap" | "match" | "order" | "voice",
-      "question": "string",
-      "topic": "string concept",
-      "options": ["opt1", "opt2", "opt3", "opt4"], 
-      "correctIndex": 0, 
-      "pairs": {"left1":"right1", "left2":"right2"}, 
-      "items": ["part1", "part2", "part3"], 
-      "answer": "correct string", 
-      "hint": "string",
-      "explanation": "string"
-    }`;
+    promptContext += `\n\nIMPORTANT:
+- Difficulty: ${selectedDifficulty}
+- Random Seed: ${randomSeed} (use this to ensure variety)
+- Each question MUST be different and unique
+- Cover DIFFERENT concepts within the topic
+- ${langInstruction}
+
+Mix these question types EVENLY:
+1. Multiple Choice (mcq) - most common
+2. Fill in the Gap (fill_gap) - provide 4 options including the answer
+3. Matching Pairs (match) - provide 2 or 3 pairs
+4. Order/Sentence Building (order) - provide a sentence or formula split into shuffled parts
+5. Voice Answer (voice) - for definitions or short answers
+
+Return ONLY a valid JSON array with ${questionCount} questions. Structure:
+{
+  "type": "mcq" | "fill_gap" | "match" | "order" | "voice",
+  "question": "string",
+  "topic": "string concept",
+  "options": ["opt1", "opt2", "opt3", "opt4"], 
+  "correctIndex": 0, 
+  "pairs": {"left1":"right1", "left2":"right2"}, 
+  "items": ["part1", "part2", "part3"], 
+  "answer": "correct string", 
+  "hint": "string",
+  "explanation": "string"
+}`;
 
     try {
         const response = await fetch('/api/generate', {
