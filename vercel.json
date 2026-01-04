@@ -10,6 +10,10 @@
             "destination": "/public/admin.html"
         },
         {
+            "source": "/reset-password",
+            "destination": "/public/reset-password.html"
+        },
+        {
             "source": "/(.*)",
             "destination": "/public/$1"
         }
