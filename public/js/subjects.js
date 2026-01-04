@@ -249,6 +249,24 @@ const SSC_BUSINESS = {
             { id: 'ch12', en: 'Bank-Customer Relation', bn: 'ব্যাংক ও গ্রাহকের সম্পর্ক' },
             { id: 'ch13', en: 'Central Bank', bn: 'কেন্দ্রীয় ব্যাংক' }
         ]
+    },
+    'Business Entrepreneurship': {
+        en: 'Business Entrepreneurship',
+        bn: 'ব্যবসায় উদ্যোগ',
+        chapters: [
+            { id: 'ch1', en: 'Intro to Business', bn: 'ব্যবসায় পরিচিতি' },
+            { id: 'ch2', en: 'Entrepreneurship', bn: 'ব্যবসায় উদ্যোগ ও উদ্যোক্তা' },
+            { id: 'ch3', en: 'Self-Employment', bn: 'আত্মকর্মসংস্থান' },
+            { id: 'ch4', en: 'Ownership', bn: 'মালিকানার ভিত্তিতে ব্যবসায়' },
+            { id: 'ch5', en: 'Legal Aspects', bn: 'ব্যবসায়ের আইনগত দিক' },
+            { id: 'ch6', en: 'Business Plan', bn: 'ব্যবসায় পরিকল্পনা' },
+            { id: 'ch7', en: 'BD Industries', bn: 'বাংলাদেশের শিল্প' },
+            { id: 'ch8', en: 'Management', bn: 'ব্যবসায় প্রতিষ্ঠানের ব্যবস্থাপনা' },
+            { id: 'ch9', en: 'Marketing', bn: 'বিপণন' },
+            { id: 'ch10', en: 'Assistance', bn: 'ব্যবসায় উদ্যোগে সহায়তাকারী সেবা' },
+            { id: 'ch11', en: 'Ethics', bn: 'ব্যবসায়ের নৈতিকতা ও সামাজিক দায়বদ্ধতা' },
+            { id: 'ch12', en: 'Success Stories', bn: 'সফল উদ্যোক্তাদের জীবনী থেকে শিক্ষণীয়' }
+        ]
     }
 };
 
@@ -272,6 +290,44 @@ const SSC_HUMANITIES = {
             { id: 'ch12', en: 'Communication', bn: 'বাংলাদেশের যোগাযোগ ব্যবস্থা ও বাণিজ্য' },
             { id: 'ch13', en: 'Development', bn: 'বাংলাদেশের উন্নয়ন কর্মকাণ্ড' },
             { id: 'ch14', en: 'Disaster Management', bn: 'বাংলাদেশের প্রাকৃতিক দুর্যোগ' }
+        ]
+    },
+    'History of BD & World': {
+        en: 'History of BD & World',
+        bn: 'বাংলাদেশের ইতিহাস ও বিশ্বসভ্যতা',
+        chapters: [
+            { id: 'ch1', en: 'Intro to History', bn: 'ইতিহাস পরিচিতি' },
+            { id: 'ch2', en: 'World Civilization', bn: 'বিশ্বসভ্যতা' },
+            { id: 'ch3', en: 'Ancient Janapadas', bn: 'প্রাচীন বাংলার জনপদ' },
+            { id: 'ch4', en: 'Ancient Politics', bn: 'প্রাচীন বাংলার রাজনৈতিক ইতিহাস' },
+            { id: 'ch5', en: 'Ancient Society', bn: 'প্রাচীন বাংলার আর্থসামাজিক ইতিহাস' },
+            { id: 'ch6', en: 'Medieval Bengal', bn: 'মধ্যযুগের বাংলা' },
+            { id: 'ch7', en: 'Medieval Society', bn: 'মধ্যযুগের আর্থসামাজিক ইতিহাস' },
+            { id: 'ch8', en: 'English Rule', bn: 'বাংলায় ইংরেজ শাসনের সূচনাপর্ব' },
+            { id: 'ch9', en: 'Resistance', bn: 'ইংরেজ আমলে প্রতিরোধ আন্দোলন' },
+            { id: 'ch10', en: 'Nationalism', bn: 'স্বাধিকার আন্দোলন' },
+            { id: 'ch11', en: 'Language Movement', bn: 'ভাষা আন্দোলন' },
+            { id: 'ch12', en: 'Military Rule', bn: 'সামরিক শাসন ও স্বাধিকার আন্দোলন' },
+            { id: 'ch13', en: '1970 Election', bn: 'সত্তরের নির্বাচন ও মুক্তিযুদ্ধ' },
+            { id: 'ch14', en: 'Bangabandhu Era', bn: 'বঙ্গবন্ধুর শাসনকাল' },
+            { id: 'ch15', en: 'Post-1975 Era', bn: 'সামরিক শাসন ও পরবর্তী ঘটনা' }
+        ]
+    },
+    'Civics & Citizenship': {
+        en: 'Civics & Citizenship',
+        bn: 'পৌরনীতি ও নাগরিকতা',
+        chapters: [
+            { id: 'ch1', en: 'Civics Intro', bn: 'পৌরনীতি ও নাগরিকতা' },
+            { id: 'ch2', en: 'Citizen', bn: 'নাগরিক ও নাগরিকতা' },
+            { id: 'ch3', en: 'Law & Liberty', bn: 'আইন, স্বাধীনতা ও সাম্য' },
+            { id: 'ch4', en: 'State & Govt', bn: 'রাষ্ট্র ও সরকার ব্যবস্থা' },
+            { id: 'ch5', en: 'Constitution', bn: 'সংবিধান' },
+            { id: 'ch6', en: 'BD Govt', bn: 'বাংলাদেশের সরকার ব্যবস্থা' },
+            { id: 'ch7', en: 'Political Parties', bn: 'গণতন্ত্রে রাজনৈতিক দল ও নির্বাচন' },
+            { id: 'ch8', en: 'Local Govt', bn: 'বাংলাদেশের স্থানীয় সরকার' },
+            { id: 'ch9', en: 'Citizen Problems', bn: 'নাগরিক সমস্যা ও আমাদের করণীয়' },
+            { id: 'ch10', en: 'Independence', bn: 'স্বাধীন বাংলাদেশের অভ্যুদয়ে নাগরিক চেতনা' },
+            { id: 'ch11', en: 'Int Organizations', bn: 'বাংলাদেশ ও আন্তর্জাতিক সংগঠন' }
         ]
     }
 };
@@ -339,6 +395,80 @@ const HSC_SCIENCE = {
             { id: 'ch8', en: 'Periodic Motion', bn: 'পর্যায়বৃত্ত গতি' },
             { id: 'ch9', en: 'Waves', bn: 'তরঙ্গ' },
             { id: 'ch10', en: 'Gas Theory', bn: 'আদর্শ গ্যাস ও গ্যাসের গতিতত্ত্ব' }
+        ]
+    },
+    'Physics 2nd Paper': {
+        en: 'Physics 2nd Paper',
+        bn: 'পদার্থবিজ্ঞান ২য় পত্র',
+        chapters: [
+            { id: 'ch1', en: 'Thermodynamics', bn: 'তাপগতিবিদ্যা' },
+            { id: 'ch2', en: 'Static Electricity', bn: 'স্থির তড়িৎ' },
+            { id: 'ch3', en: 'Current Electricity', bn: 'চল তড়িৎ' },
+            { id: 'ch4', en: 'Magnetic Effect', bn: 'তড়িৎ প্রবাহের চৌম্বক ক্রিয়া' },
+            { id: 'ch5', en: 'EMF Induction', bn: 'তাড়িতচৌম্বক আবেশ' },
+            { id: 'ch6', en: 'Geometric Optics', bn: 'জ্যামিতিক আলোকবিজ্ঞান' },
+            { id: 'ch7', en: 'Physical Optics', bn: 'ভৌত আলোকবিজ্ঞান' },
+            { id: 'ch8', en: 'Modern Physics', bn: 'আধুনিক পদার্থবিজ্ঞান' },
+            { id: 'ch9', en: 'Atomic Model', bn: 'পরমাণুর মডেল' },
+            { id: 'ch10', en: 'Semiconductor', bn: 'সেমিকন্ডাক্টর' }
+        ]
+    },
+    'Chemistry 1st Paper': {
+        en: 'Chemistry 1st Paper',
+        bn: 'রসায়ন ১ম পত্র',
+        chapters: [
+            { id: 'ch1', en: 'Lab Safety', bn: 'ল্যাবরেটরির নিরাপদ ব্যবহার' },
+            { id: 'ch2', en: 'Qualitative', bn: 'গুণগত রসায়ন' },
+            { id: 'ch3', en: 'Periodic Properties', bn: 'মৌলের পর্যায়বৃত্ত ধর্ম ও রাসায়নিক বন্ধন' },
+            { id: 'ch4', en: 'Chemical Changes', bn: 'রাসায়নিক পরিবর্তন' },
+            { id: 'ch5', en: 'Applied Chemistry', bn: 'কর্মমুখী রসায়ন' }
+        ]
+    },
+    'Chemistry 2nd Paper': {
+        en: 'Chemistry 2nd Paper',
+        bn: 'রসায়ন ২য় পত্র',
+        chapters: [
+            { id: 'ch1', en: 'Environmental', bn: 'পরিবেশ রসায়ন' },
+            { id: 'ch2', en: 'Organic', bn: 'জৈব রসায়ন' },
+            { id: 'ch3', en: 'Quantitative', bn: 'পরিমাণগত রসায়ন' },
+            { id: 'ch4', en: 'Electrochemistry', bn: 'তড়িৎ রসায়ন' },
+            { id: 'ch5', en: 'Economic', bn: 'অর্থনৈতিক রসায়ন' }
+        ]
+    },
+    'Biology 1st Paper': {
+        en: 'Biology 1st Paper',
+        bn: 'জীববিজ্ঞান ১ম পত্র',
+        chapters: [
+            { id: 'ch1', en: 'Cell Structure', bn: 'কোষ ও এর গঠন' },
+            { id: 'ch2', en: 'Cell Division', bn: 'কোষ বিভাজন' },
+            { id: 'ch3', en: 'Cell Chemistry', bn: 'কোষ রসায়ন' },
+            { id: 'ch4', en: 'Microbes', bn: 'অণুজীব' },
+            { id: 'ch5', en: 'Algae/Fungi', bn: 'শৈবাল ও ছত্রাক' },
+            { id: 'ch6', en: 'Bryophyta', bn: 'ব্রায়োফাইটা' },
+            { id: 'ch7', en: 'Gymnosperm', bn: 'নগ্নবীজী' },
+            { id: 'ch8', en: 'Tissue', bn: 'টিস্যু' },
+            { id: 'ch9', en: 'Physiology', bn: 'উদ্ভিদ শারীরতত্ত্ব' },
+            { id: 'ch10', en: 'Reproduction', bn: 'উদ্ভিদ প্রজনন' },
+            { id: 'ch11', en: 'Biotech', bn: 'জীবপ্রযুক্তি' },
+            { id: 'ch12', en: 'Environment', bn: 'জীবের পরিবেশ' }
+        ]
+    },
+    'Biology 2nd Paper': {
+        en: 'Biology 2nd Paper',
+        bn: 'জীববিজ্ঞান ২য় পত্র',
+        chapters: [
+            { id: 'ch1', en: 'Animal Diversity', bn: 'প্রাণীর বিভিন্নতা' },
+            { id: 'ch2', en: 'Intro Animals', bn: 'প্রাণী পরিচিতি' },
+            { id: 'ch3', en: 'Digestion', bn: 'পরিপাক' },
+            { id: 'ch4', en: 'Blood', bn: 'রক্ত' },
+            { id: 'ch5', en: 'Respiration', bn: 'শ্বসন' },
+            { id: 'ch6', en: 'Excretion', bn: 'বর্জ্য নিষ্কাশন' },
+            { id: 'ch7', en: 'Movement', bn: 'চলন' },
+            { id: 'ch8', en: 'Coordination', bn: 'সমন্বয়' },
+            { id: 'ch9', en: 'Reproduction', bn: 'মানব জীবনের ধারাবাহিকতা' },
+            { id: 'ch10', en: 'Immunity', bn: 'প্রতিরক্ষা' },
+            { id: 'ch11', en: 'Genetics', bn: 'জিনতত্ত্ব' },
+            { id: 'ch12', en: 'Behavior', bn: 'প্রাণীর আচরণ' }
         ]
     }
 };
