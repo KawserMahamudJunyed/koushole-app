@@ -736,17 +736,29 @@ function updateGreeting() {
         profileName.innerText = fullName || "Student";
     }
     if (profileGroup) {
-        const cls = userProfile.class || "10";
-        const isUniversity = cls === 'University' || cls === 'বিশ্ববিদ্যালয়';
+        let cls = userProfile.class || "10";
+        let group = userProfile.group;
+
+        // Auto-detect University based on Group (Heuristic for corrupted data)
+        const uniSubjects = ['CSE', 'EEE', 'BBA', 'English', 'Economics', 'Medical', 'Mathematics', 'Architecture', 'Law', 'Physics', 'Chemistry', 'Biology'];
+        const isUniSubject = group && uniSubjects.some(s => group.includes(s));
+
+        let isUniversity = String(cls).trim() === 'University' || String(cls).trim() === 'বিশ্ববিদ্যালয়' || String(cls).includes('University');
+
+        if (isUniSubject) {
+            isUniversity = true;
+            if (cls === "10" || !cls) cls = "University"; // Correct the display
+        }
 
         if (isUniversity) {
-            const dept = userProfile.group || (currentLang === 'bn' ? 'বিভাগ নির্বাচন করা হয়নি' : 'No Dept Selected');
+            const dept = group || (currentLang === 'bn' ? 'বিভাগ নির্বাচন করা হয়নি' : 'No Dept Selected');
             const suffix = currentLang === 'bn' ? 'ডিপার্টমেন্ট' : 'Department';
             profileGroup.innerText = `${cls} • ${dept} ${suffix}`;
         } else {
-            const group = userProfile.group || "Science";
+            // Default School Logic - Remove "Science" default to avoid confusion
+            const displayGroup = group || (currentLang === 'bn' ? 'গ্রুপ নির্বাচন করা হয়নি' : 'No Group');
             const suffix = currentLang === 'bn' ? 'গ্রুপ' : 'Group';
-            profileGroup.innerText = `Class ${cls} • ${group} ${suffix}`;
+            profileGroup.innerText = `Class ${cls} • ${displayGroup} ${suffix}`;
         }
     }
 }
