@@ -585,30 +585,45 @@ function updateGreeting() {
     const greetingEl = document.querySelector('[data-key="greeting"]');
     const nick = currentLang === 'bn' ? (userProfile.nicknameBn || userProfile.nickname) : userProfile.nickname;
 
-    // Time-based greeting with Happy Studying for late night
-    const hour = new Date().getHours();
-    let greetingEn, greetingBn;
+    // Performance-based motivational greetings (all day!)
+    const streak = userMemory?.day_streak || 0;
+    const accuracy = userMemory?.accuracy || 0;
+    const totalQuizzes = userMemory?.total_quizzes || 0;
 
-    if (hour >= 5 && hour < 12) {
-        greetingEn = "Good Morning";
-        greetingBn = "সুপ্রভাত";
-    } else if (hour >= 12 && hour < 17) {
-        greetingEn = "Good Afternoon";
-        greetingBn = "শুভ অপরাহ্ন";
-    } else if (hour >= 17 && hour < 21) {
-        greetingEn = "Good Evening";
-        greetingBn = "শুভ সন্ধ্যা";
+    let greetingEn, greetingBn, emoji;
+
+    // Pick message and emoji based on performance
+    if (streak >= 7) {
+        greetingEn = "Unstoppable";
+        greetingBn = "অপ্রতিরোধ্য";
+        emoji = "💪";
+    } else if (streak >= 3) {
+        greetingEn = "On Fire";
+        greetingBn = "জ্বলে উঠেছ";
+        emoji = "🔥";
+    } else if (accuracy >= 80 && totalQuizzes > 0) {
+        greetingEn = "Star Performer";
+        greetingBn = "তারকা শিক্ষার্থী";
+        emoji = "⭐";
+    } else if (totalQuizzes >= 10) {
+        greetingEn = "Keep Going";
+        greetingBn = "এগিয়ে চলো";
+        emoji = "🎯";
+    } else if (totalQuizzes > 0) {
+        greetingEn = "Great Progress";
+        greetingBn = "দারুণ অগ্রগতি";
+        emoji = "📈";
     } else {
-        // Late night study session - encouraging message!
         greetingEn = "Happy Studying";
         greetingBn = "শুভ পড়াশোনা";
+        emoji = "🚀";
     }
 
-    // Construct greeting based on lang (always use 🚀)
+    // Construct greeting based on lang
     if (currentLang === 'bn') {
-        greetingEl.innerHTML = `${greetingBn}, ${nick || 'শিক্ষার্থী'}! 🚀`;
+        greetingEl.innerHTML = `${greetingBn}, ${nick || 'শিক্ষার্থী'}! ${emoji}`;
     } else {
-        greetingEl.innerHTML = `${greetingEn}, ${nick || 'Student'}! 🚀`;
+        greetingEl.innerHTML = `${greetingEn}, ${nick || 'Student'}! ${emoji}`;
     }
 
     // Update Profile Name in View
