@@ -532,12 +532,12 @@ function togglePersonalDetails() {
 
     if (content.classList.contains('hidden')) {
         content.classList.remove('hidden');
-        arrow.classList.add('rotate-180');
+        arrow.classList.add('rotate-90');
         // Populate with user data
         populatePersonalDetails();
     } else {
         content.classList.add('hidden');
-        arrow.classList.remove('rotate-180');
+        arrow.classList.remove('rotate-90');
     }
 }
 
