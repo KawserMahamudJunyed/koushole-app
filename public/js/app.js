@@ -736,9 +736,18 @@ function updateGreeting() {
         profileName.innerText = fullName || "Student";
     }
     if (profileGroup) {
-        const group = userProfile.group || "Science";
         const cls = userProfile.class || "10";
-        profileGroup.innerText = `Class ${cls} • ${group} Group`;
+        const isUniversity = cls === 'University' || cls === 'বিশ্ববিদ্যালয়';
+
+        if (isUniversity) {
+            const dept = userProfile.group || (currentLang === 'bn' ? 'বিভাগ নির্বাচন করা হয়নি' : 'No Dept Selected');
+            const suffix = currentLang === 'bn' ? 'ডিপার্টমেন্ট' : 'Department';
+            profileGroup.innerText = `${cls} • ${dept} ${suffix}`;
+        } else {
+            const group = userProfile.group || "Science";
+            const suffix = currentLang === 'bn' ? 'গ্রুপ' : 'Group';
+            profileGroup.innerText = `Class ${cls} • ${group} ${suffix}`;
+        }
     }
 }
 
@@ -2114,3 +2123,58 @@ window.switchTab = function (viewName) {
         updateUniversityUI();
     }
 };
+
+/* Re-implementing Signup Logic to ensure robustness */
+function setupSignupLogic() {
+    const classSelect = document.getElementById('signup-class');
+    const groupContainer = document.getElementById('group-container');
+    const groupSelect = document.getElementById('signup-group');
+
+    const deptContainer = document.getElementById('dept-container');
+    const deptSelect = document.getElementById('signup-dept');
+
+    const customDeptContainer = document.getElementById('custom-dept-container');
+    const customDeptInput = document.getElementById('signup-custom-dept');
+
+    if (!classSelect) return;
+
+    // Reset Function
+    const resetFields = () => {
+        if (groupContainer) groupContainer.classList.add('hidden');
+        if (groupSelect) { groupSelect.disabled = true; groupSelect.required = false; groupSelect.value = ""; }
+
+        if (deptContainer) deptContainer.classList.add('hidden');
+        if (deptSelect) { deptSelect.disabled = true; deptSelect.required = false; deptSelect.value = ""; }
+
+        if (customDeptContainer) customDeptContainer.classList.add('hidden');
+        if (customDeptInput) { customDeptInput.disabled = true; customDeptInput.required = false; customDeptInput.value = ""; }
+    };
+
+    classSelect.addEventListener('change', function () {
+        resetFields();
+        const val = this.value;
+
+        if (val === 'University') {
+            // Show Department
+            if (deptContainer) deptContainer.classList.remove('hidden');
+            if (deptSelect) { deptSelect.disabled = false; deptSelect.required = true; }
+        } else if (['9', '10', '11', '12'].includes(val)) {
+            // Show Group
+            if (groupContainer) groupContainer.classList.remove('hidden');
+            if (groupSelect) { groupSelect.disabled = false; groupSelect.required = true; }
+        }
+    });
+
+    // Department Change Listener
+    if (deptSelect) {
+        deptSelect.addEventListener('change', function () {
+            if (this.value === 'Other') {
+                if (customDeptContainer) customDeptContainer.classList.remove('hidden');
+                if (customDeptInput) { customDeptInput.disabled = false; customDeptInput.required = true; }
+            } else {
+                if (customDeptContainer) customDeptContainer.classList.add('hidden');
+                if (customDeptInput) { customDeptInput.disabled = true; customDeptInput.required = false; }
+            }
+        });
+    }
+}
