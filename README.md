@@ -39,26 +39,38 @@ Koushole employs a sophisticated **Agentic AI Architecture** to deliver real-tim
 ### 📚 Library & Content
 | Feature | Description |
 |---------|-------------|
-| **Official NCTB Books** | Admin-uploaded textbooks organized by Class & Subject |
-| **Custom Library** | Upload your own PDFs, EPUBs, or even **photos of offline books** |
-| **Group-Based Subjects** | Science, Business Studies, Humanities - all Class 9-12 |
-| **Progress Tracking** | Real-time upload progress bar with percentage |
+| **Official NCTB 2026 Books** | Admin-uploaded textbooks aligned with the latest NCTB curriculum |
+| **Custom Library** | Upload PDFs, EPUBs, TXT, or **photos of offline books** (JPG, PNG) |
+| **Complete Curriculum** | SSC (Class 9-10) & HSC (Class 11-12) with all subjects & chapters |
+| **Group-Based Filtering** | Science, Business Studies, Humanities - content filtered per student |
+| **University Support** | Department-based profiles for higher education students |
 
 ### 📝 Smart Assessment
-- **Adaptive Quizzes**: MCQ, Fill-in-the-Blank, Matching, and Reordering
-- **Subject-Specific**: Dynamically filters subjects based on your group/class
-- **Remedial Loops**: Khan Academy video suggestions *(🚧 Coming Soon)*
+| Feature | Description |
+|---------|-------------|
+| **Chapter-Based Quizzes** | Select specific chapters from any subject for targeted practice |
+| **Custom Question Count** | Choose 5, 10, 15, 20, 25, or enter custom (1-50) questions |
+| **Adaptive Difficulty** | AI adjusts based on student accuracy and learning history |
+| **Question Variety** | MCQ, Fill-in-the-Blank, Matching, Ordering, and Voice Answer |
+| **Student Observation** | Tracks performance and targets weak areas automatically |
+| **Khan Academy** | Video suggestions for remedial learning *(🚧 Coming Soon)* |
 
 ### 🎮 Gamification
-- **XP & Leaderboards**: Earn experience for every correct answer
-- **Daily Streaks**: Build consistent study habits
-- **Badges**: Unlock achievements like "Week Warrior" and "Topic Master"
-- **Learning Charts**: Track your progress over time
+| Feature | Description |
+|---------|-------------|
+| **XP System** | Earn experience points for every correct answer |
+| **Daily Streaks** | Build consistent study habits with streak tracking |
+| **Performance Greetings** | Motivational messages based on your progress |
+| **Badges & Achievements** | Unlock "Week Warrior", "Topic Master", and more |
+| **Learning Velocity Chart** | Visualize your progress over the last 7 days |
 
 ### 🌏 Accessibility
-- **Bilingual UI**: Complete English/বাংলা toggle
-- **Voice-First**: Speech-to-text support for questions
-- **Dark Mode**: Premium OLED-friendly dark theme
+| Feature | Description |
+|---------|-------------|
+| **Bilingual UI** | Complete English/বাংলা toggle throughout the app |
+| **Voice Input** | Speech-to-text support for asking questions |
+| **Dark Mode** | Premium OLED-friendly dark theme |
+| **Responsive Design** | Optimized for mobile, tablet, and desktop |
 
 ---
 
@@ -178,7 +190,7 @@ koushole-app/
 │   ├── js/
 │   │   ├── app.js          # Main app logic
 │   │   ├── admin.js        # Admin panel logic
-│   │   ├── subjects.js     # NCTB subject lists
+│   │   ├── subjects.js     # NCTB 2026 curriculum (subjects & chapters)
 │   │   ├── quiz.js         # Quiz functionality
 │   │   └── supabase-config.js
 │   └── css/
