@@ -256,62 +256,53 @@ function openQuizConfig(bookName = null, presetSubject = null, presetTopic = nul
     } else {
         modalTitle.innerText = currentLang === 'bn' ? "কাস্টম সেটআপ" : "Custom Setup";
 
-        // Use global subject helper to match Admin Panel
+        // Use global subject helper - NCTB 2026 Curriculum
         const userGroup = (localStorage.getItem('userGroup') || userProfile.group || 'Science');
         const userClass = (localStorage.getItem('userClass') || userProfile.class || '9');
 
-        let subjects = [];
+        let subjectNames = [];
         if (window.getSubjects) {
-            const subjectNames = window.getSubjects(userGroup, userClass);
-            // Convert strings to objects for compatibility with existing code
-            subjects = subjectNames.map(name => ({
-                id: name, // Use name as ID for simplicity
-                nameEn: name,
-                nameBn: name, // We can add translation map later if needed
-                chapters: [] // Chapters will be fetched dynamically or mocked
-            }));
+            subjectNames = window.getSubjects(userGroup, userClass);
         } else {
             // Fallback
-            subjects = [
-                { id: 'Physics', nameEn: 'Physics', nameBn: 'পদার্থবিজ্ঞান', chapters: [] },
-                { id: 'Chemistry', nameEn: 'Chemistry', nameBn: 'রসায়ন', chapters: [] }
-            ];
+            subjectNames = ['Physics', 'Chemistry', 'Biology'];
         }
 
+        // Populate subject dropdown
         subjectSelect.innerHTML = '';
-        subjects.forEach(sub => {
+        subjectNames.forEach(name => {
             const opt = document.createElement('option');
-            opt.value = sub.id;
-            opt.innerText = sub.nameEn; // Use English name for now
+            opt.value = name;
+            // Get Bangla name if available
+            const subData = window.getSubjectData ? window.getSubjectData(name, userGroup, userClass) : null;
+            opt.innerText = currentLang === 'bn' && subData?.bn ? subData.bn : name;
             subjectSelect.appendChild(opt);
         });
         subjectSelect.disabled = false;
 
-        // Populate chapters for first subject
-        const firstSub = subjects[0];
-        topicSelect.innerHTML = `<option value="all">${currentLang === 'bn' ? 'সব অধ্যায়' : 'All Chapters'}</option>`;
-        if (firstSub && firstSub.chapters) {
-            firstSub.chapters.forEach(chap => {
-                const opt = document.createElement('option');
-                opt.value = chap.id;
-                opt.innerText = currentLang === 'bn' ? chap.bn : chap.en;
-                topicSelect.appendChild(opt);
-            });
-        }
-
-        // Handle subject change for chapters
-        subjectSelect.onchange = () => {
-            const selId = subjectSelect.value;
-            const subData = subjects.find(s => s.id === selId);
+        // Function to populate chapters for selected subject
+        function populateChapters(subjectName) {
             topicSelect.innerHTML = `<option value="all">${currentLang === 'bn' ? 'সব অধ্যায়' : 'All Chapters'}</option>`;
-            if (subData && subData.chapters) {
-                subData.chapters.forEach(chap => {
+
+            if (window.getChapters) {
+                const chapters = window.getChapters(subjectName, userGroup, userClass);
+                chapters.forEach(chap => {
                     const opt = document.createElement('option');
                     opt.value = chap.id;
                     opt.innerText = currentLang === 'bn' ? chap.bn : chap.en;
                     topicSelect.appendChild(opt);
                 });
             }
+        }
+
+        // Populate chapters for first subject
+        if (subjectNames.length > 0) {
+            populateChapters(subjectNames[0]);
+        }
+
+        // Handle subject change for chapters
+        subjectSelect.onchange = () => {
+            populateChapters(subjectSelect.value);
         };
 
         if (presetSubject) {
