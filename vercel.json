@@ -1,14 +1,20 @@
 {
-    "version": 2,
-    "cleanUrls": true,
-    "routes": [
+    "rewrites": [
         {
-            "src": "/api/(.*)",
-            "dest": "/api/$1"
+            "source": "/api/:path*",
+            "destination": "/api/:path*"
         },
         {
-            "src": "/(.*)",
-            "dest": "/public/$1"
+            "source": "/reset-password",
+            "destination": "/public/reset-password.html"
+        },
+        {
+            "source": "/admin",
+            "destination": "/public/admin.html"
+        },
+        {
+            "source": "/:path*",
+            "destination": "/public/:path*"
         }
     ]
 }
